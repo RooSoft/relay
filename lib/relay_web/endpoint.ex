@@ -14,7 +14,7 @@ defmodule RelayWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  socket("/", RelayWeb.Sockets.EchoSocket,
+  socket("/", RelayWeb.Sockets.RequestSocket,
     websocket: [
       path: "",
       timeout: @connection_timeout,

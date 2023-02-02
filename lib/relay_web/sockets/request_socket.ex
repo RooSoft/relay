@@ -1,4 +1,4 @@
-defmodule RelayWeb.Sockets.EchoSocket do
+defmodule RelayWeb.Sockets.RequestSocket do
   @behaviour Phoenix.Socket.Transport
 
   @impl true
