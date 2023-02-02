@@ -24,11 +24,15 @@ defmodule RelayWeb.Sockets.EchoSocket do
 
   @impl true
   def handle_in({request, _opts}, state) do
-    request
-    |> Jason.decode!()
-    |> Relay.Request.handle()
+    result =
+      request
+      |> Jason.decode!()
+      |> Relay.Request.handle()
+      |> Jason.encode!()
 
-    {:reply, :ok, {:text, request}, state}
+    IO.inspect(result, label: "RESULT")
+
+    {:reply, :ok, {:text, result}, state}
   end
 
   @impl true
