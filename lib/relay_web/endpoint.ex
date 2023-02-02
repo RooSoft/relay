@@ -1,6 +1,9 @@
 defmodule RelayWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :relay
 
+  @ping_timeout Application.compile_env(:relay, :ping_timeout, 30_000)
+  @connection_timeout Application.compile_env(:relay, :connection_timeout, 60_000)
+
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
@@ -12,7 +15,12 @@ defmodule RelayWeb.Endpoint do
   ]
 
   socket("/", RelayWeb.Sockets.EchoSocket,
-    websocket: [path: "", timeout: 60_000, ping: 30_000],
+    websocket: [
+      path: "",
+      timeout: @connection_timeout,
+      ping: @ping_timeout,
+      connect_info: [:peer_data, :user_agent]
+    ],
     longpoll: false
   )
 

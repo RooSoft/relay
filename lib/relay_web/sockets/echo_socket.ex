@@ -3,12 +3,13 @@ defmodule RelayWeb.Sockets.EchoSocket do
 
   @impl true
   def child_spec(_opts) do
+    IO.inspect("CHILD SPECS")
     %{id: __MODULE__, start: {Task, :start_link, [fn -> :ok end]}, restart: :transient}
   end
 
   @impl true
   def connect(state) do
-    IO.puts("CONNECTED")
+    IO.inspect(state, label: "CONNECTED")
 
     {:ok, state}
   end

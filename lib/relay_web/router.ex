@@ -17,7 +17,7 @@ defmodule RelayWeb.Router do
   scope "/", RelayWeb do
     pipe_through(:browser)
 
-    get("/", PageController, :home)
+    get("/admin", PageController, :home)
   end
 
   # Other scopes may use custom stacks.
