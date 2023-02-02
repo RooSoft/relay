@@ -9,7 +9,7 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def connect(state) do
-    IO.inspect(state, label: "CONNECTED")
+    IO.puts("INCOMING CONNECTION")
 
     {:ok, state}
   end
@@ -24,14 +24,12 @@ defmodule RelayWeb.Sockets.RequestSocket do
   end
 
   @impl true
-  def handle_in({request, _opts}, state) do
+  def handle_in({request, _opts}, %{connect_info: %{peer_data: peer}} = state) do
     result =
       request
       |> Jason.decode!()
-      |> Relay.Request.handle()
+      |> Relay.Request.handle(peer)
       |> Jason.encode!()
-
-    IO.inspect(result, label: "RESULT")
 
     {:reply, :ok, {:text, result}, state}
   end
