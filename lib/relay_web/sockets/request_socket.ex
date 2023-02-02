@@ -63,9 +63,8 @@ defmodule RelayWeb.Sockets.RequestSocket do
   end
 
   @impl true
-  def terminate(reason, state) do
-    IO.inspect(reason, label: "TERMINATE")
-    IO.inspect(state)
+  def terminate(reason, %{connect_info: %{peer_data: peer}} = state) do
+    Relay.Request.terminate(peer)
 
     :ok
   end
