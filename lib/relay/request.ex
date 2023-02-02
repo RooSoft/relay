@@ -1,12 +1,22 @@
 defmodule Relay.Request do
+  alias Relay.Request.SubscriptionRegistry
+
+  def handle(["EVENT", event]) do
+    IO.inspect(event, label: "NEW EVENT")
+
+    IO.inspect(SubscriptionRegistry.lookup())
+  end
+
   def handle(["REQ", subscription_id, %{"kinds" => [0]} = query], _peer) do
     IO.inspect(query, label: "#{subscription_id} METADATA EVENT")
 
     ["EOSE", subscription_id]
   end
 
-  def handle(["REQ", subscription_id, %{"kinds" => [3]} = query], peer) do
+  def handle(["REQ", subscription_id, %{"kinds" => [3]} = query] = subscription, _peer) do
     IO.inspect(query, label: "#{subscription_id} CONTACTS EVENT")
+
+    SubscriptionRegistry.subscribe(subscription)
 
     result = ["EOSE", subscription_id]
 

@@ -17,9 +17,10 @@ defmodule Relay.Application do
       # Start Finch
       {Finch, name: Relay.Finch},
       # Start the Endpoint (http/https)
-      RelayWeb.Endpoint
+      RelayWeb.Endpoint,
       # Start a worker by calling: Relay.Worker.start_link(arg)
       # {Relay.Worker, arg}
+      {Registry, [keys: :duplicate, name: SubscriptionRegistry]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
