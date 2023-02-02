@@ -8,8 +8,8 @@ defmodule RelayWeb.Sockets.RequestSocket do
   end
 
   @impl true
-  def connect(state) do
-    IO.puts("INCOMING CONNECTION")
+  def connect(%{connect_info: %{peer_data: peer}} = state) do
+    IO.inspect(peer, label: "INCOMING CONNECTION")
 
     {:ok, state}
   end
@@ -63,7 +63,7 @@ defmodule RelayWeb.Sockets.RequestSocket do
   end
 
   @impl true
-  def terminate(reason, %{connect_info: %{peer_data: peer}} = state) do
+  def terminate(_reason, %{connect_info: %{peer_data: peer}} = state) do
     Relay.Request.terminate(peer)
 
     :ok
