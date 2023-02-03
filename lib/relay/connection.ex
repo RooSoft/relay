@@ -2,7 +2,7 @@ defmodule Relay.Connection do
   alias Relay.Connection.{SubscriptionRegistry}
   alias Relay.Connection.Commands.{Request}
 
-  def handle(["EVENT", event]) do
+  def handle(["EVENT", event], _peer) do
     IO.inspect(event, label: "NEW EVENT")
 
     IO.inspect(SubscriptionRegistry.lookup())
