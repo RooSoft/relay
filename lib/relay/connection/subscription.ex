@@ -1,9 +1,12 @@
 defmodule Relay.Connection.Subscription do
   defstruct [:id, :since, :until, :limit, ids: [], authors: [], kinds: [], e: [], p: []]
 
-  alias Relay.Connection.Subscription
+  @metadata_kind 0
+  @contacts_kind 3
 
-  def from_req(["REQ", subscription_id, query]) do
+  alias Relay.Connection.{Subscription, SubscriptionRegistry}
+
+  def from_query(query, subscription_id) do
     %Subscription{
       id: subscription_id,
       since: Map.get(query, "since"),
@@ -15,5 +18,31 @@ defmodule Relay.Connection.Subscription do
       e: Map.get(query, "e"),
       p: Map.get(query, "p")
     }
+  end
+
+  def handle(%Subscription{id: id, kinds: [@metadata_kind]} = subscription) do
+    IO.inspect(subscription, label: "#{id} METADATA REQ")
+
+    SubscriptionRegistry.subscribe(subscription)
+
+    ["EOSE", id]
+  end
+
+  def handle(%Subscription{id: id, kinds: [@contacts_kind]} = subscription) do
+    IO.inspect(subscription, label: "#{id} CONTACTS REQ")
+
+    SubscriptionRegistry.subscribe(subscription)
+
+    result = ["EOSE", id]
+
+    IO.inspect(result, label: "#{id} RETURNING")
+  end
+
+  def handle(%Subscription{id: id} = subscription) do
+    IO.inspect(subscription, label: "UNKNOWN REQ")
+
+    SubscriptionRegistry.subscribe(subscription)
+
+    ["EOSE", id]
   end
 end

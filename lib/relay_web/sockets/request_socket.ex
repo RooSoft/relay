@@ -5,7 +5,6 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def child_spec(_opts) do
-    IO.inspect("CHILD SPECS")
     %{id: __MODULE__, start: {Task, :start_link, [fn -> :ok end]}, restart: :transient}
   end
 
@@ -33,7 +32,8 @@ defmodule RelayWeb.Sockets.RequestSocket do
       |> Connection.handle(peer)
       |> Jason.encode!()
 
-    {:reply, :ok, {:text, result}, state}
+    {:ok, state}
+    #    {:reply, :ok, {:text, result}, state}
   end
 
   @impl true
