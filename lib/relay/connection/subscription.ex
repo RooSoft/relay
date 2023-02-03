@@ -2,6 +2,7 @@ defmodule Relay.Connection.Subscription do
   defstruct [:id, :since, :until, :limit, ids: [], authors: [], kinds: [], e: [], p: []]
 
   @metadata_kind 0
+  @note_kind 1
   @contacts_kind 3
 
   alias Relay.Connection.{Subscription, SubscriptionRegistry}
@@ -30,6 +31,16 @@ defmodule Relay.Connection.Subscription do
 
   def handle(%Subscription{id: id, kinds: [@contacts_kind]} = subscription) do
     IO.inspect(subscription, label: "#{id} CONTACTS REQ")
+
+    SubscriptionRegistry.subscribe(subscription)
+
+    result = ["EOSE", id]
+
+    IO.inspect(result, label: "#{id} RETURNING")
+  end
+
+  def handle(%Subscription{id: id, kinds: [@note_kind]} = subscription) do
+    IO.inspect(subscription, label: "#{id} NOTE REQ")
 
     SubscriptionRegistry.subscribe(subscription)
 

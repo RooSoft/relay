@@ -26,11 +26,9 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def handle_in({request, _opts}, %{connect_info: %{peer_data: peer}} = state) do
-    result =
-      request
-      |> Jason.decode!()
-      |> Connection.handle(peer)
-      |> Jason.encode!()
+    request
+    |> Jason.decode!()
+    |> Connection.handle(peer)
 
     {:ok, state}
     #    {:reply, :ok, {:text, result}, state}
@@ -43,6 +41,15 @@ defmodule RelayWeb.Sockets.RequestSocket do
     Process.send_after(self(), :ping, ping_timeout)
 
     {:push, {:ping, ""}, state}
+  end
+
+  @impl true
+  def handle_info({:emit, subscription_id, event}, state) do
+    IO.inspect(event, label: "SENDING AN EVENT")
+
+    json = Jason.encode!(["EVENT", subscription_id, event])
+
+    {:reply, :ok, {:text, json}, state}
   end
 
   @impl true

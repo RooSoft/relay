@@ -4,6 +4,8 @@ defmodule Relay.Broadcaster do
   def send(event) do
     IO.inspect(event, label: "BROADCASTING")
 
-    IO.inspect(SubscriptionRegistry.lookup())
+    for {pid, subscription} <- SubscriptionRegistry.lookup() do
+      send(pid, {:emit, subscription.id, event})
+    end
   end
 end
