@@ -1,7 +1,7 @@
-defmodule Relay.Request.Subscription do
+defmodule Relay.Connection.Subscription do
   defstruct [:id, :since, :until, :limit, ids: [], authors: [], kinds: [], e: [], p: []]
 
-  alias Relay.Request.Subscription
+  alias Relay.Connection.Subscription
 
   def from_req(["REQ", subscription_id, query]) do
     %Subscription{

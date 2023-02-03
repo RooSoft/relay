@@ -1,6 +1,8 @@
 defmodule RelayWeb.Sockets.RequestSocket do
   @behaviour Phoenix.Socket.Transport
 
+  alias Relay.Connection
+
   @impl true
   def child_spec(_opts) do
     IO.inspect("CHILD SPECS")
@@ -28,7 +30,7 @@ defmodule RelayWeb.Sockets.RequestSocket do
     result =
       request
       |> Jason.decode!()
-      |> Relay.Request.handle(peer)
+      |> Connection.handle(peer)
       |> Jason.encode!()
 
     {:reply, :ok, {:text, result}, state}
@@ -64,7 +66,7 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def terminate(_reason, %{connect_info: %{peer_data: peer}} = _state) do
-    Relay.Request.terminate(peer)
+    Connection.terminate(peer)
 
     :ok
   end

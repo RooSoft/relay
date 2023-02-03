@@ -1,4 +1,4 @@
-defmodule Relay.Request.SubscriptionRegistry do
+defmodule Relay.Connection.SubscriptionRegistry do
   def subscribe(subscription) do
     Registry.register(SubscriptionRegistry, :subscription, subscription)
 

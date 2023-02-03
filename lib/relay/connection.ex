@@ -1,5 +1,5 @@
-defmodule Relay.Request do
-  alias Relay.Request.{Subscription, SubscriptionRegistry}
+defmodule Relay.Connection do
+  alias Relay.Connection.{Subscription, SubscriptionRegistry}
 
   def handle(["EVENT", event]) do
     IO.inspect(event, label: "NEW EVENT")
