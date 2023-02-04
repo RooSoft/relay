@@ -14,9 +14,14 @@ defmodule Relay.Broadcaster do
   defp matches_subscription(event, subscription) do
     event
     |> filter_by_kind(subscription)
+    |> filter_by_id(subscription)
   end
 
   defp filter_by_kind(%{"kind" => kind} = event, %Subscription{kinds: kinds}) do
     if Enum.member?(kinds, kind), do: event, else: nil
+  end
+
+  defp filter_by_id(%{"id" => id} = event, %Subscription{ids: ids}) do
+    if Enum.member?(ids, id), do: event, else: nil
   end
 end
