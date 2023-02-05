@@ -6,19 +6,10 @@ defmodule Relay.Connection.Subscription do
   @contacts_kind 3
 
   alias Relay.Connection.{Subscription, SubscriptionRegistry}
+  alias Relay.Connection.Subscription.Parser
 
   def from_query(query, subscription_id) do
-    %Subscription{
-      id: subscription_id,
-      since: Map.get(query, "since"),
-      until: Map.get(query, "until"),
-      limit: Map.get(query, "limit"),
-      ids: Map.get(query, "ids"),
-      authors: Map.get(query, "authors"),
-      kinds: Map.get(query, "kinds"),
-      e: Map.get(query, "e"),
-      p: Map.get(query, "p")
-    }
+    Parser.from_req(query, subscription_id)
   end
 
   def handle(%Subscription{id: id, kinds: [@metadata_kind]} = subscription) do

@@ -1,11 +1,12 @@
 defmodule Relay.Connection do
-  alias Relay.{Broadcaster, Storage, Validator}
+  alias Relay.{Broadcaster, Event, Storage, Validator}
   alias Relay.Connection.Commands.{Request}
 
   def handle(["EVENT", event], _peer) do
     case Validator.check(event) do
       :ok ->
         event
+        |> Event.parse()
         |> Storage.record()
         |> Broadcaster.send()
 
