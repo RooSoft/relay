@@ -12,12 +12,12 @@ defmodule Relay.Event.Parser do
         "kind" => kind,
         "pubkey" => hex_pubkey,
         "sig" => hex_sig,
-        "tags" => tags
+        "tags" => hex_tags
       }) do
     id = Binary.from_hex(hex_id)
     pubkey = Binary.from_hex(hex_pubkey)
     sig = Binary.from_hex(hex_sig)
-
+    tags = parse_tags(hex_tags)
     created_at = parse_created_at(unix_created_at)
 
     %Event{
@@ -43,5 +43,17 @@ defmodule Relay.Event.Parser do
       {:ok, content} -> content
       {:error, _} -> nil
     end
+  end
+
+  def parse_tags(hex_tags) do
+    hex_tags
+    |> Enum.map(fn [type | [hex_id | rest]] = original_version ->
+      Base.decode16(hex_id, case: :mixed) |> IO.inspect(label: "DECODE TAGS")
+
+      case Base.decode16(hex_id, case: :mixed) do
+        :error -> original_version
+        {:ok, id} -> [type | [id | rest]]
+      end
+    end)
   end
 end
