@@ -48,8 +48,6 @@ defmodule Relay.Event.Parser do
   def parse_tags(hex_tags) do
     hex_tags
     |> Enum.map(fn [type | [hex_id | rest]] = original_version ->
-      Base.decode16(hex_id, case: :mixed) |> IO.inspect(label: "DECODE TAGS")
-
       case Base.decode16(hex_id, case: :mixed) do
         :error -> original_version
         {:ok, id} -> [type | [id | rest]]

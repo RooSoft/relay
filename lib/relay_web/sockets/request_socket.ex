@@ -45,9 +45,9 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def handle_info({:emit, subscription_id, event}, state) do
-    IO.inspect(event, label: "SENDING AN EVENT")
-
     json = Jason.encode!(["EVENT", subscription_id, event])
+
+    IO.inspect(json, label: "SENDING")
 
     {:reply, :ok, {:text, json}, state}
   end

@@ -30,6 +30,7 @@ defmodule Relay.Event do
       hex_id = Binary.to_hex(id)
       hex_pubkey = Binary.to_hex(pubkey)
       hex_sig = Binary.to_hex(sig)
+      hex_tags = encode_tags(tags)
       timestamp = DateTime.to_unix(created_at)
 
       Jason.Encode.map(
@@ -38,12 +39,20 @@ defmodule Relay.Event do
           "pubkey" => hex_pubkey,
           "created_at" => timestamp,
           "kind" => kind,
-          "tags" => tags,
+          "tags" => hex_tags,
           "content" => content,
           "sig" => hex_sig
         },
         opts
       )
+    end
+
+    defp encode_tags(tags) do
+      tags
+      |> Enum.map(fn [type | [id | rest]] ->
+        hex_id = Base.encode16(id, case: :lower)
+        [type | [hex_id | rest]]
+      end)
     end
   end
 
