@@ -20,7 +20,7 @@ defmodule Relay.Application do
       RelayWeb.Endpoint,
       # Start a worker by calling: Relay.Worker.start_link(arg)
       # {Relay.Worker, arg}
-      {Registry, [keys: :duplicate, name: SubscriptionRegistry]}
+      {Registry, [keys: :duplicate, name: FilterRegistry]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
