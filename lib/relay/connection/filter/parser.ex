@@ -1,9 +1,9 @@
-defmodule Relay.Connection.Subscription.Parser do
-  alias Relay.Connection.Subscription
+defmodule Relay.Connection.Filter.Parser do
+  alias Relay.Connection.Filter
 
-  def from_req(query, subscription_id) do
-    %Subscription{
-      id: subscription_id,
+  def from_req(query, filter_id) do
+    %Filter{
+      id: filter_id,
       since: Map.get(query, "since"),
       until: Map.get(query, "until"),
       limit: Map.get(query, "limit"),

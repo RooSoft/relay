@@ -1,21 +1,21 @@
 defmodule Relay.Broadcaster do
-  alias Relay.Connection.{Subscription, SubscriptionRegistry}
-  alias Relay.Broadcaster.Filter
+  alias Relay.Connection.{Filter, SubscriptionRegistry}
+  alias Relay.Broadcaster.ApplyFilter
   alias Relay.{Event}
 
   def send(%Event{} = event) do
-    for {pid, subscription} <- SubscriptionRegistry.lookup() do
-      if matches_subscription(event, subscription) do
-        send(pid, {:emit, subscription.id, event})
+    for {pid, filter} <- SubscriptionRegistry.lookup() do
+      if matches_filter(event, filter) do
+        send(pid, {:emit, filter.id, event})
       end
     end
   end
 
-  defp matches_subscription(%Event{} = event, %Subscription{} = subscription) do
+  defp matches_filter(%Event{} = event, %Filter{} = filter) do
     event
-    |> Filter.by_kind(subscription)
-    |> Filter.by_id(subscription)
-    |> Filter.by_author(subscription)
-    |> Filter.by_tags(subscription)
+    |> ApplyFilter.by_kind(filter)
+    |> ApplyFilter.by_id(filter)
+    |> ApplyFilter.by_author(filter)
+    |> ApplyFilter.by_tags(filter)
   end
 end
