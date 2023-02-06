@@ -6,7 +6,7 @@ defmodule Relay.Broadcaster do
   def send(%Event{} = event) do
     for {pid, filter} <- FilterRegistry.lookup() do
       if matches_filter(event, filter) do
-        send(pid, {:emit, filter.id, event})
+        send(pid, {:emit, filter.subscription_id, event})
       end
     end
   end
