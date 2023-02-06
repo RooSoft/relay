@@ -16,5 +16,6 @@ defmodule Relay.Broadcaster do
     |> Filter.by_kind(subscription)
     |> Filter.by_id(subscription)
     |> Filter.by_author(subscription)
+    |> Filter.by_tags(subscription)
   end
 end
