@@ -51,8 +51,7 @@ defmodule Relay.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:k256, "~> 0.0.7"},
-      {:binary, "~> 0.0.5"}
+      {:nostr_basics, "~> 0.0.6"}
     ]
   end
 

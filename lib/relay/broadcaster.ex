@@ -1,7 +1,8 @@
 defmodule Relay.Broadcaster do
-  alias Relay.Connection.{Filter, FilterRegistry}
+  alias NostrBasics.{Event, Filter}
+
+  alias Relay.Connection.FilterRegistry
   alias Relay.Broadcaster.ApplyFilter
-  alias Relay.{Event}
 
   def send(%Event{} = event) do
     for {pid, filter} <- FilterRegistry.lookup() do

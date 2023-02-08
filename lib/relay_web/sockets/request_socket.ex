@@ -26,9 +26,7 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def handle_in({request, _opts}, %{connect_info: %{peer_data: peer}} = state) do
-    request
-    |> Jason.decode!()
-    |> Connection.handle(peer)
+    Connection.handle(request, peer)
 
     {:ok, state}
     #    {:reply, :ok, {:text, result}, state}

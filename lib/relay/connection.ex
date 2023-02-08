@@ -1,12 +1,19 @@
 defmodule Relay.Connection do
-  alias Relay.{Broadcaster, Event, Storage, Validator}
-  alias Relay.Connection.Commands.{Request}
+  alias NostrBasics.{ClientMessage}
+  alias NostrBasics.Event.Validator
 
-  def handle(["EVENT", event], _peer) do
-    case Validator.check(event) do
+  alias Relay.{Broadcaster, Storage}
+  alias Relay.Connection.FilterRegistry
+
+  def handle(request, peer) do
+    ClientMessage.parse(request)
+    |> dispatch(peer)
+  end
+
+  defp dispatch({:event, event}, _peer) do
+    case Validator.validate_event(event) do
       :ok ->
         event
-        |> Event.parse()
         |> Storage.record()
         |> Broadcaster.send()
 
@@ -15,18 +22,21 @@ defmodule Relay.Connection do
     end
   end
 
-  def handle(["REQ" | request], _peer) do
-    Request.handle(request)
+  defp dispatch({:req, filters}, _peer) do
+    for filter <- filters do
+      IO.inspect(filter, label: "ADDING A SUBSCRIPTION")
+      FilterRegistry.subscribe(filter)
+    end
   end
 
-  def handle(["CLOSE", subscription_id], _peer) do
+  defp dispatch({:close, subscription_id}, _peer) do
     IO.inspect(subscription_id, label: "CLOSE COMMAND")
 
     []
   end
 
-  def handle(unknown, _peer) do
-    IO.inspect(unknown, label: "UNKNOWN COMMAND")
+  defp dispatch({:unknown, unknown_message}, _peer) do
+    IO.inspect(unknown_message, label: "UNKNOWN MESSAGE")
 
     []
   end
