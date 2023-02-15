@@ -7,8 +7,26 @@ defmodule Relay.Broadcaster do
   def send(%Event{} = event) do
     for {pid, filter} <- FilterRegistry.lookup() do
       if matches_filter(event, filter) do
-        send(pid, {:emit, filter.subscription_id, event})
+        json = Jason.encode!(["EVENT", filter.subscription_id, event])
+
+        send(pid, {:emit, json})
       end
+    end
+  end
+
+  def send_end_of_stored_events(subscription_id) do
+    subscriptions =
+      FilterRegistry.lookup()
+      |> Enum.filter(fn {_pid, %NostrBasics.Filter{subscription_id: filter_subscription_id}} ->
+        filter_subscription_id == subscription_id
+      end)
+
+    for {pid, _filter} <- subscriptions do
+      json = Jason.encode!(["EOSE", subscription_id])
+
+      IO.inspect(json, label: "SENDING TO #{inspect(pid)}")
+
+      send(pid, {:emit, json})
     end
   end
 

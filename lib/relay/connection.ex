@@ -25,10 +25,10 @@ defmodule Relay.Connection do
 
   defp dispatch({:req, filters}, _peer) do
     for filter <- filters do
-      get_stored_events(filter)
-      |> broadcast_events()
-
       FilterRegistry.subscribe(filter)
+
+      get_stored_events(filter)
+      |> broadcast_events(filter.subscription_id)
     end
   end
 
@@ -52,7 +52,10 @@ defmodule Relay.Connection do
     []
   end
 
-  defp broadcast_events(_events) do
+  defp broadcast_events(_events, subscription_id) do
+    IO.inspect(subscription_id, label: "SENDING EOS TO #{subscription_id}")
+    Broadcaster.send_end_of_stored_events(subscription_id)
+
     :ok
   end
 end

@@ -2,6 +2,7 @@ defmodule RelayWeb.Sockets.RequestSocket do
   @behaviour Phoenix.Socket.Transport
 
   alias Relay.Connection
+  alias NostrBasics.Event
 
   @impl true
   def child_spec(_opts) do
@@ -42,9 +43,7 @@ defmodule RelayWeb.Sockets.RequestSocket do
   end
 
   @impl true
-  def handle_info({:emit, subscription_id, event}, state) do
-    json = Jason.encode!(["EVENT", subscription_id, event])
-
+  def handle_info({:emit, json}, state) do
     IO.inspect(json, label: "SENDING")
 
     {:reply, :ok, {:text, json}, state}
