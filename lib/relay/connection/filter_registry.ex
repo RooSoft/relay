@@ -1,5 +1,7 @@
 defmodule Relay.Connection.FilterRegistry do
   def subscribe(filter) do
+    IO.inspect(filter, label: "subscribing to")
+
     Registry.register(FilterRegistry, :filter, filter)
 
     filter

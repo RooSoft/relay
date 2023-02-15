@@ -6,11 +6,15 @@ defmodule Relay.Connection do
   alias Relay.Connection.FilterRegistry
 
   def handle(request, peer) do
-    ClientMessage.parse(request)
-    |> dispatch(peer)
+    request
+    |> IO.inspect(label: "INITIAL REQUEST")
+#    |> ClientMessage.parse()
+#    |> dispatch(peer)
   end
 
   defp dispatch({:event, event}, _peer) do
+    IO.inspect(event)
+
     case Validator.validate_event(event) do
       :ok ->
         event
@@ -24,7 +28,9 @@ defmodule Relay.Connection do
 
   defp dispatch({:req, filters}, _peer) do
     for filter <- filters do
-      IO.inspect(filter, label: "ADDING A SUBSCRIPTION")
+      get_stored_events(filter)
+      |> broadcast_events()
+
       FilterRegistry.subscribe(filter)
     end
   end
@@ -43,5 +49,13 @@ defmodule Relay.Connection do
 
   def terminate(peer) do
     IO.inspect(peer, label: "TERMINATE in Relay.Request")
+  end
+
+  defp get_stored_events(_filter) do
+    []
+  end
+
+  defp broadcast_events(_events) do
+    :ok
   end
 end
