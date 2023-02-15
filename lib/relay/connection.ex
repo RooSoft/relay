@@ -7,14 +7,11 @@ defmodule Relay.Connection do
 
   def handle(request, peer) do
     request
-    |> IO.inspect(label: "INITIAL REQUEST")
-#    |> ClientMessage.parse()
-#    |> dispatch(peer)
+    |> ClientMessage.parse()
+    |> dispatch(peer)
   end
 
   defp dispatch({:event, event}, _peer) do
-    IO.inspect(event)
-
     case Validator.validate_event(event) do
       :ok ->
         event
