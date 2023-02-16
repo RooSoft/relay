@@ -25,7 +25,7 @@ defmodule Relay.Connection.FiltersTest do
 
     assert 1 == Filters.count()
 
-    Filters.remove(subscription_id)
+    Filters.remove_subscription(subscription_id)
 
     assert 0 == Filters.count()
   end

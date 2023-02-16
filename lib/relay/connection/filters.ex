@@ -7,7 +7,7 @@ defmodule Relay.Connection.Filters do
     filter
   end
 
-  def remove(subscription_id) do
+  def remove_subscription(subscription_id) do
     Registry.unregister(Registry.Filters, subscription_id)
   end
 
