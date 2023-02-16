@@ -19,6 +19,13 @@ defmodule Relay.Connection.Filters do
     Registry.select(Registry.Filters, spec)
   end
 
+  def by_kind(kind) do
+    list()
+    |> Enum.filter(fn {_subscription_id, _pid, %Filter{} = f} ->
+      Enum.member?(f.kinds, kind)
+    end)
+  end
+
   def count() do
     list()
     |> Enum.count()

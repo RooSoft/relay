@@ -33,13 +33,13 @@ defmodule Relay.Connection.FiltersTest do
   test "add filters from another process, and verify that they're gone when the process terminate" do
     parent = self()
 
-    original_filter = Generators.Filter.new(kind: [1]) |> Filters.add()
+    original_filter = Generators.Filter.new(kinds: [1]) |> Filters.add()
 
     assert 1 == Filters.count()
 
     spawn(fn ->
-      Generators.Filter.new(kind: [1]) |> Filters.add()
-      Generators.Filter.new(kind: [1]) |> Filters.add()
+      Generators.Filter.new(kinds: [1]) |> Filters.add()
+      Generators.Filter.new(kinds: [1]) |> Filters.add()
 
       assert 3 == Filters.count()
 
@@ -51,5 +51,17 @@ defmodule Relay.Connection.FiltersTest do
         Process.sleep(10)
         assert [{original_filter.subscription_id, self(), original_filter}] == Filters.list()
     end
+  end
+
+  test "find filters by kind" do
+    Generators.Filter.new(kind: [0]) |> Filters.add()
+    note_filter = Generators.Filter.new(kinds: [1]) |> Filters.add()
+
+    note_filters = Filters.by_kind(1)
+
+    subscription_id = note_filter.subscription_id
+    pid = self()
+
+    assert [{^subscription_id, ^pid, ^note_filter}] = note_filters
   end
 end
