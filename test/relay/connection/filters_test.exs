@@ -29,4 +29,26 @@ defmodule Relay.Connection.FiltersTest do
 
     assert 0 == Filters.count()
   end
+
+  test "add filters from another process, and verify that they're gone when the process terminate" do
+    parent = self()
+
+    spawn(fn ->
+      filter1 = Support.FilterGenerator.new()
+      filter2 = Support.FilterGenerator.new()
+
+      Filters.add(filter1)
+      Filters.add(filter2)
+
+      assert 2 == Filters.count()
+
+      send(parent, :done)
+    end)
+
+    receive do
+      :done ->
+        Process.sleep(10)
+        assert 0 == Filters.count()
+    end
+  end
 end
