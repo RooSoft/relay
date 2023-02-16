@@ -2,6 +2,7 @@
 --ignore-dir=_build
 --ignore-dir=.elixir_ls
 --ignore-dir=priv/wordlists
+--ignore-dir=priv/static
 --ignore-dir=.github
 --ignore-file=is:mix.lock
 --ignore-file=is:erl_crash.dump
