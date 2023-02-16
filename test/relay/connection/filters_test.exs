@@ -4,12 +4,12 @@ defmodule Relay.Connection.FiltersTest do
   alias NostrBasics.Filter
 
   alias Relay.Connection.Filters
-  alias Relay.Support
+  alias Relay.Support.Generators
 
   doctest Filters
 
   test "add a filter" do
-    filter = Support.FilterGenerator.new()
+    filter = Generators.Filter.new(kind: [1])
 
     Filters.add(filter)
 
@@ -19,7 +19,7 @@ defmodule Relay.Connection.FiltersTest do
   end
 
   test "add and remove a filter" do
-    %Filter{subscription_id: subscription_id} = filter = Support.FilterGenerator.new()
+    %Filter{subscription_id: subscription_id} = filter = Generators.Filter.new(kind: [1])
 
     Filters.add(filter)
 
@@ -33,13 +33,13 @@ defmodule Relay.Connection.FiltersTest do
   test "add filters from another process, and verify that they're gone when the process terminate" do
     parent = self()
 
-    original_filter = Support.FilterGenerator.new() |> Filters.add()
+    original_filter = Generators.Filter.new(kind: [1]) |> Filters.add()
 
     assert 1 == Filters.count()
 
     spawn(fn ->
-      Support.FilterGenerator.new() |> Filters.add()
-      Support.FilterGenerator.new() |> Filters.add()
+      Generators.Filter.new(kind: [1]) |> Filters.add()
+      Generators.Filter.new(kind: [1]) |> Filters.add()
 
       assert 3 == Filters.count()
 
