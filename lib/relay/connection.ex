@@ -3,7 +3,7 @@ defmodule Relay.Connection do
   alias NostrBasics.Event.Validator
 
   alias Relay.{Broadcaster, Storage}
-  alias Relay.Connection.FilterRegistry
+  alias Relay.Connection.Filters
 
   def handle(request, peer) do
     request
@@ -25,7 +25,7 @@ defmodule Relay.Connection do
 
   defp dispatch({:req, filters}, _peer) do
     for filter <- filters do
-      FilterRegistry.subscribe(filter)
+      Filters.add(filter)
 
       get_stored_events(filter)
       |> broadcast_events(filter.subscription_id)

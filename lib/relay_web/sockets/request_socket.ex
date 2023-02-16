@@ -2,7 +2,6 @@ defmodule RelayWeb.Sockets.RequestSocket do
   @behaviour Phoenix.Socket.Transport
 
   alias Relay.Connection
-  alias NostrBasics.Event
 
   @impl true
   def child_spec(_opts) do
