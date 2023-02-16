@@ -17,7 +17,7 @@ defmodule Relay.Broadcaster do
   def send_end_of_stored_events(subscription_id) do
     subscriptions =
       Filters.list()
-      |> Enum.filter(fn {_pid, %NostrBasics.Filter{subscription_id: filter_subscription_id}} ->
+      |> Enum.filter(fn {filter_subscription_id, _pid, _filter} ->
         filter_subscription_id == subscription_id
       end)
 
