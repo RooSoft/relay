@@ -21,8 +21,15 @@ defmodule Relay.Connection.Filters do
 
   def by_kind(kind) do
     list()
-    |> Enum.filter(fn {_subscription_id, _pid, %Filter{} = f} ->
-      Enum.member?(f.kinds, kind)
+    |> Enum.filter(fn {_subscription_id, _pid, %Filter{kinds: kinds}} ->
+      Enum.member?(kinds, kind)
+    end)
+  end
+
+  def by_author(author) do
+    list()
+    |> Enum.filter(fn {_subscription_id, _pid, %Filter{authors: authors}} ->
+      Enum.member?(authors, author)
     end)
   end
 
