@@ -1,5 +1,5 @@
 defmodule Relay.Connection.Filters do
-  alias NostrBasics.Filter
+  alias NostrBasics.{Event, Filter}
 
   def add(%Filter{subscription_id: subscription_id} = filter) do
     Registry.register(Registry.Filters, subscription_id, filter)
@@ -19,14 +19,18 @@ defmodule Relay.Connection.Filters do
     Registry.select(Registry.Filters, spec)
   end
 
-  def by_kind(kind) do
+  def by_kind(%Event{kind: kind}), do: by_kind(kind)
+
+  def by_kind(kind) when is_integer(kind) do
     list()
     |> Enum.filter(fn {_subscription_id, _pid, %Filter{kinds: kinds}} ->
       Enum.member?(kinds, kind)
     end)
   end
 
-  def by_author(author) do
+  def by_author(%Event{pubkey: author}), do: by_author(author)
+
+  def by_author(author) when is_binary(author) do
     list()
     |> Enum.filter(fn {_subscription_id, _pid, %Filter{authors: authors}} ->
       Enum.member?(authors, author)

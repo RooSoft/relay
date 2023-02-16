@@ -1,7 +1,7 @@
 defmodule Relay.Connection.FiltersTest do
   use ExUnit.Case, async: true
 
-  alias NostrBasics.Filter
+  alias NostrBasics.{Event, Filter}
 
   alias Relay.Connection.Filters
   alias Relay.Support.Generators
@@ -57,7 +57,9 @@ defmodule Relay.Connection.FiltersTest do
     Generators.Filter.new(kind: [0]) |> Filters.add()
     note_filter = Generators.Filter.new(kinds: [1]) |> Filters.add()
 
-    note_filters = Filters.by_kind(1)
+    note_filters =
+      %Event{kind: 1}
+      |> Filters.by_kind()
 
     subscription_id = note_filter.subscription_id
     pid = self()
@@ -78,7 +80,9 @@ defmodule Relay.Connection.FiltersTest do
       Generators.Filter.new(authors: [koala_sats_pubkey])
       |> Filters.add()
 
-    note_filters = Filters.by_author(koala_sats_pubkey)
+    note_filters =
+      %Event{pubkey: koala_sats_pubkey}
+      |> Filters.by_author()
 
     subscription_id = note_filter.subscription_id
     pid = self()
