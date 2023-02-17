@@ -140,4 +140,37 @@ defmodule Relay.Broadcaster.ApplyFilter do
       false -> nil
     end
   end
+
+  @doc """
+  Applies a person tag filter to an event
+
+  ## Examples
+      #### applying filtering with the same pubkey, should be pass
+      iex> pubkey = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
+      ...> filter = %NostrBasics.Filter{p: [pubkey]}
+      ...> p_tag = ["p", pubkey, ""]
+      ...> event = %NostrBasics.Event{tags: [p_tag]}
+      ...> Relay.Broadcaster.ApplyFilter.by_person_tag(event, filter)
+      event
+  """
+  def by_person_tag(nil, _), do: nil
+  def by_person_tag(%Event{tags: _kind} = event, %Filter{e: []}), do: event
+
+  def by_person_tag(%Event{} = event, %Filter{} = filter) do
+    match_tag("p", event, filter)
+    |> maybe_return_event(event)
+  end
+
+  defp match_tag(tag_type, %Event{tags: tags}, %Filter{e: e}) do
+    tags
+    |> Enum.any?(fn [type | [id | _rest]] ->
+      case type do
+        ^tag_type -> Enum.member?(e, id)
+        _ -> false
+      end
+    end)
+  end
+
+  defp maybe_return_event(true, event), do: event
+  defp maybe_return_event(false, _event), do: nil
 end
