@@ -89,7 +89,7 @@ defmodule Relay.Broadcaster.ApplyFilter do
       ...> Relay.Broadcaster.ApplyFilter.by_event_tag(event, filter)
       event
 
-      #### applying filtering with a different event id, should be filtered out
+      #### applying filtering on an event with no tag, should be filtered out
       iex> event_id = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
       ...> filter = %NostrBasics.Filter{e: [event_id]}
       ...> event = %NostrBasics.Event{tags: []}
@@ -126,8 +126,8 @@ defmodule Relay.Broadcaster.ApplyFilter do
   def by_event_tag(nil, _), do: nil
   def by_event_tag(%Event{tags: _kind} = event, %Filter{e: []}), do: event
 
-  def by_event_tag(%Event{} = event, %Filter{} = filter) do
-    match_tag("e", event, filter)
+  def by_event_tag(%Event{} = event, %Filter{e: filter_tag_list}) do
+    match_tag("e", event, filter_tag_list)
     |> maybe_return_event(event)
   end
 
@@ -142,20 +142,27 @@ defmodule Relay.Broadcaster.ApplyFilter do
       ...> event = %NostrBasics.Event{tags: [p_tag]}
       ...> Relay.Broadcaster.ApplyFilter.by_person_tag(event, filter)
       event
+
+      #### applying a filter on an event with no tag, should be filtered out
+      iex> pubkey = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
+      ...> filter = %NostrBasics.Filter{p: [pubkey]}
+      ...> event = %NostrBasics.Event{tags: []}
+      ...> Relay.Broadcaster.ApplyFilter.by_person_tag(event, filter)
+      nil
   """
   def by_person_tag(nil, _), do: nil
-  def by_person_tag(%Event{tags: _kind} = event, %Filter{e: []}), do: event
+  def by_person_tag(%Event{tags: _kind} = event, %Filter{p: []}), do: event
 
-  def by_person_tag(%Event{} = event, %Filter{} = filter) do
-    match_tag("p", event, filter)
+  def by_person_tag(%Event{} = event, %Filter{p: filter_tag_list}) do
+    match_tag("p", event, filter_tag_list)
     |> maybe_return_event(event)
   end
 
-  defp match_tag(tag_type, %Event{tags: tags}, %Filter{e: e}) do
+  defp match_tag(tag_type, %Event{tags: tags}, filter_tag_list) do
     tags
     |> Enum.any?(fn [type | [id | _rest]] ->
       case type do
-        ^tag_type -> Enum.member?(e, id)
+        ^tag_type -> Enum.member?(filter_tag_list, id)
         _ -> false
       end
     end)
