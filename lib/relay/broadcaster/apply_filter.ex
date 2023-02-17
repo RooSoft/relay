@@ -29,6 +29,22 @@ defmodule Relay.Broadcaster.ApplyFilter do
     if Enum.member?(ids, id), do: event, else: nil
   end
 
+  @doc """
+  Applies a author filter to an event, applied on the pubkey
+
+  ## Examples
+      iex> author = <<0xee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74::256>>
+      ...> filter = %NostrBasics.Filter{authors: [author]}
+      ...> event = %NostrBasics.Event{pubkey: author}
+      ...> Relay.Broadcaster.ApplyFilter.by_author(event, filter)
+      event
+
+      iex> author = <<0xee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74::256>>
+      ...> filter = %NostrBasics.Filter{authors: [author]}
+      ...> event = %NostrBasics.Event{pubkey: Binary.reverse(author)}
+      ...> Relay.Broadcaster.ApplyFilter.by_author(event, filter)
+      nil
+  """
   def by_author(nil, _), do: nil
   def by_author(%Event{pubkey: _author} = event, %Filter{authors: nil}), do: event
   def by_author(%Event{pubkey: _author} = event, %Filter{authors: []}), do: event
