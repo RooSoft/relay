@@ -53,6 +53,22 @@ defmodule Relay.Broadcaster.ApplyFilter do
     if Enum.member?(authors, author), do: event, else: nil
   end
 
+  @doc """
+  Applies a kind filter to an event
+
+  ## Examples
+      iex> kind = 1
+      ...> filter = %NostrBasics.Filter{kinds: [kind]}
+      ...> event = %NostrBasics.Event{kind: kind}
+      ...> Relay.Broadcaster.ApplyFilter.by_kind(event, filter)
+      event
+
+      iex> kind = 1
+      ...> filter = %NostrBasics.Filter{kinds: [kind]}
+      ...> event = %NostrBasics.Event{kind: kind+1}
+      ...> Relay.Broadcaster.ApplyFilter.by_kind(event, filter)
+      nil
+  """
   def by_kind(nil, _), do: nil
   def by_kind(%Event{kind: _kind} = event, %Filter{kinds: nil}), do: event
   def by_kind(%Event{kind: _kind} = event, %Filter{kinds: []}), do: event
