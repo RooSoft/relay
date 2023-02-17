@@ -126,19 +126,9 @@ defmodule Relay.Broadcaster.ApplyFilter do
   def by_event_tag(nil, _), do: nil
   def by_event_tag(%Event{tags: _kind} = event, %Filter{e: []}), do: event
 
-  def by_event_tag(%Event{tags: tags} = event, %Filter{e: e}) do
-    is_match =
-      tags
-      |> Enum.any?(fn [type | [id | _rest]] ->
-        case type do
-          "e" -> Enum.member?(e, id)
-        end
-      end)
-
-    case is_match do
-      true -> event
-      false -> nil
-    end
+  def by_event_tag(%Event{} = event, %Filter{} = filter) do
+    match_tag("e", event, filter)
+    |> maybe_return_event(event)
   end
 
   @doc """
