@@ -5,6 +5,17 @@ defmodule Relay.Broadcaster.ApplyFilter do
 
   alias NostrBasics.{Event, Filter}
 
+  @doc """
+  Applies a ID filter to an event
+
+  ## Examples
+      iex> id = "cabf522ac94121ffc04a07265960fc5e"
+      ...> filter = %NostrBasics.Filter{ids: [id]}
+      ...> event = %NostrBasics.Event{id: id}
+      ...> Relay.Broadcaster.ApplyFilter.by_id(event, filter)
+      event
+  """
+
   def by_id(nil, _), do: nil
   def by_id(%Event{id: _kind} = event, %Filter{ids: nil}), do: event
   def by_id(%Event{id: _kind} = event, %Filter{ids: []}), do: event
