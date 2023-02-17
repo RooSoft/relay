@@ -166,6 +166,16 @@ defmodule Relay.Broadcaster.ApplyFilter do
       ...> event = %NostrBasics.Event{tags: [p_tag]}
       ...> Relay.Broadcaster.ApplyFilter.by_person_tag(event, filter)
       nil
+
+      #### filtering for an event list the event is a part of, should pass
+      iex> pubkey = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
+      ...> wrong_pubkey_1 = "c48389c1ba5a8b38da3ff7f3bb2c6cdee09f962d6155b784e6ee43a2829fa224"
+      ...> wrong_pubkey_2 = "343d863778954b3a0ed65567212358c9ef6b4a24393610cf7e4e3e71bc559027"
+      ...> filter = %NostrBasics.Filter{p: [wrong_pubkey_1, pubkey, wrong_pubkey_2]}
+      ...> p_tag = ["p", pubkey, ""]
+      ...> event = %NostrBasics.Event{tags: [p_tag]}
+      ...> Relay.Broadcaster.ApplyFilter.by_event_tag(event, filter)
+      event
   """
   def by_person_tag(nil, _), do: nil
   def by_person_tag(%Event{tags: _kind} = event, %Filter{p: []}), do: event
