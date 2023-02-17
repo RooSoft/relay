@@ -7,6 +7,15 @@ defmodule Relay.Broadcaster.ApplyFilter do
 
   @doc """
   Applies all filters to an event and see if it gets returned
+
+  ## Examples
+      iex> id = "cabf522ac94121ffc04a07265960fc5e"
+      ...> author = <<0xee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74::256>>
+      ...> kind = 1
+      ...> filter = %NostrBasics.Filter{ids: [id], authors: [author], kinds: [kind]}
+      ...> event = %NostrBasics.Event{id: id, pubkey: author, kind: kind}
+      ...> |> Relay.Broadcaster.ApplyFilter.all(filter)
+      event
   """
   @spec all(Event.t(), Filter.t()) :: Event.t() | nil
   def all(%Event{} = event, %Filter{} = filter) do
