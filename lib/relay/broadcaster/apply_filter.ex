@@ -149,6 +149,13 @@ defmodule Relay.Broadcaster.ApplyFilter do
       ...> event = %NostrBasics.Event{tags: []}
       ...> Relay.Broadcaster.ApplyFilter.by_person_tag(event, filter)
       nil
+
+      #### applying filtering with an empty person tag, should pass
+      iex> pubkey = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
+      ...> filter = %NostrBasics.Filter{p: []}
+      ...> event = %NostrBasics.Event{tags: [pubkey]}
+      ...> Relay.Broadcaster.ApplyFilter.by_person_tag(event, filter)
+      event
   """
   def by_person_tag(nil, _), do: nil
   def by_person_tag(%Event{tags: _kind} = event, %Filter{p: []}), do: event
