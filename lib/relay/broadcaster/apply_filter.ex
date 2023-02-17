@@ -87,6 +87,12 @@ defmodule Relay.Broadcaster.ApplyFilter do
       ...> event = %NostrBasics.Event{tags: [e_tag]}
       ...> Relay.Broadcaster.ApplyFilter.by_event_tag(event, filter)
       event
+
+      iex> event_id = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
+      ...> filter = %NostrBasics.Filter{e: [event_id]}
+      ...> event = %NostrBasics.Event{tags: []}
+      ...> Relay.Broadcaster.ApplyFilter.by_event_tag(event, filter)
+      nil
   """
   def by_event_tag(nil, _), do: nil
   def by_event_tag(%Event{tags: _kind} = event, %Filter{e: []}), do: event
