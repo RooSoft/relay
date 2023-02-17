@@ -6,6 +6,19 @@ defmodule Relay.Broadcaster.ApplyFilter do
   alias NostrBasics.{Event, Filter}
 
   @doc """
+  Applies all filters to an event and see if it gets returned
+  """
+  @spec all(Event.t(), Filter.t()) :: Event.t() | nil
+  def all(%Event{} = event, %Filter{} = filter) do
+    event
+    |> by_kind(filter)
+    |> by_id(filter)
+    |> by_author(filter)
+    |> by_event_tag(filter)
+    |> by_person_tag(filter)
+  end
+
+  @doc """
   Applies a ID filter to an event
 
   ## Examples

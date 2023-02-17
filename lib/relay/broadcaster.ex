@@ -6,7 +6,7 @@ defmodule Relay.Broadcaster do
 
   def send(%Event{} = event) do
     for {pid, filter} <- Filters.list() do
-      if matches_filter(event, filter) do
+      if ApplyFilter.all(event, filter) do
         json = Jason.encode!(["EVENT", filter.subscription_id, event])
 
         send(pid, {:emit, json})
@@ -28,14 +28,5 @@ defmodule Relay.Broadcaster do
 
       send(pid, {:emit, json})
     end
-  end
-
-  defp matches_filter(%Event{} = event, %Filter{} = filter) do
-    event
-    |> ApplyFilter.by_kind(filter)
-    |> ApplyFilter.by_id(filter)
-    |> ApplyFilter.by_author(filter)
-    |> ApplyFilter.by_event_tag(filter)
-    |> ApplyFilter.by_person_tag(filter)
   end
 end
