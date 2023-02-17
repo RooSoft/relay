@@ -77,16 +77,26 @@ defmodule Relay.Broadcaster.ApplyFilter do
     if Enum.member?(kinds, kind), do: event, else: nil
   end
 
-  def by_tags(nil, _), do: nil
-  def by_tags(%Event{tags: _kind} = event, %Filter{e: [], p: []}), do: event
+  @doc """
+  Applies a event tag filter to an event
 
-  def by_tags(%Event{tags: tags} = event, %Filter{e: e, p: p}) do
+  ## Examples
+      iex> event_id = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
+      ...> filter = %NostrBasics.Filter{e: [event_id]}
+      ...> e_tag = ["e", event_id, ""]
+      ...> event = %NostrBasics.Event{tags: [e_tag]}
+      ...> Relay.Broadcaster.ApplyFilter.by_event_tag(event, filter)
+      event
+  """
+  def by_event_tag(nil, _), do: nil
+  def by_event_tag(%Event{tags: _kind} = event, %Filter{e: []}), do: event
+
+  def by_event_tag(%Event{tags: tags} = event, %Filter{e: e}) do
     is_match =
       tags
       |> Enum.any?(fn [type | [id | _rest]] ->
         case type do
           "e" -> Enum.member?(e, id)
-          "p" -> Enum.member?(p, id)
         end
       end)
 

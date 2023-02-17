@@ -35,6 +35,6 @@ defmodule Relay.Broadcaster do
     |> ApplyFilter.by_kind(filter)
     |> ApplyFilter.by_id(filter)
     |> ApplyFilter.by_author(filter)
-    |> ApplyFilter.by_tags(filter)
+    |> ApplyFilter.by_event_tag(filter)
   end
 end
