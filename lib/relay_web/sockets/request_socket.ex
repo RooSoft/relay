@@ -57,7 +57,6 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def handle_control({nil, [opcode: :pong]}, state) do
-    IO.puts("GOT A PONG")
     {:ok, state}
   end
 
