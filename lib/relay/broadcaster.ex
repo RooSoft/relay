@@ -1,11 +1,11 @@
 defmodule Relay.Broadcaster do
-  alias NostrBasics.{Event, Filter}
+  alias NostrBasics.{Event}
 
   alias Relay.Connection.Filters
   alias Relay.Broadcaster.ApplyFilter
 
   def send(%Event{} = event) do
-    for {pid, filter} <- Filters.list() do
+    for {_subscription_id, pid, filter} <- Filters.list() do
       if ApplyFilter.all(event, filter) do
         json = Jason.encode!(["EVENT", filter.subscription_id, event])
 
