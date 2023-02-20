@@ -12,6 +12,8 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def connect(%{connect_info: %{peer_data: peer}} = state) do
+    Logger.info("NEW CONNECTION: #{inspect(peer)}")
+
     {:ok, state}
   end
 
@@ -43,8 +45,6 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def handle_info({:emit, json}, state) do
-    Logger.debug("SENDING #{json}")
-
     {:reply, :ok, {:text, json}, state}
   end
 

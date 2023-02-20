@@ -1,7 +1,7 @@
 defmodule Relay.Connection do
   require Logger
 
-  alias NostrBasics.{ClientMessage, CloseRequest}
+  alias NostrBasics.{ClientMessage, CloseRequest, Event}
   alias NostrBasics.Event.Validator
 
   alias Relay.{Broadcaster, Storage}
@@ -13,7 +13,9 @@ defmodule Relay.Connection do
     |> dispatch(peer)
   end
 
-  defp dispatch({:event, event}, _peer) do
+  defp dispatch({:event, %Event{kind: kind, content: content} = event}, peer) do
+    Logger.info("#{inspect(peer.address)} sent kind #{kind}: #{inspect(content)}")
+
     case Validator.validate_event(event) do
       :ok ->
         event
