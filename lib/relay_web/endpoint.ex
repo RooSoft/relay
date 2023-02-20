@@ -19,7 +19,8 @@ defmodule RelayWeb.Endpoint do
       path: "",
       timeout: @connection_timeout,
       ping: @ping_timeout,
-      connect_info: [:peer_data, :user_agent]
+      connect_info: [:peer_data, :user_agent],
+      compress: true
     ],
     longpoll: false
   )
