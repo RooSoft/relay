@@ -3,5 +3,7 @@ defmodule Relay.Storage do
 
   def record(event) do
     Logger.debug("STORING #{inspect(event)}")
+
+    event
   end
 end
