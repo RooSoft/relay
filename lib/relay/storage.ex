@@ -1,5 +1,7 @@
 defmodule Relay.Storage do
+  require Logger
+
   def record(event) do
-    IO.inspect(event, label: "STORING")
+    Logger.debut("STORING #{inspect(event)}")
   end
 end

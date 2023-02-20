@@ -1,5 +1,7 @@
 defmodule Relay.Connection do
-  alias NostrBasics.{ClientMessage}
+  require Logger
+
+  alias NostrBasics.{ClientMessage, CloseRequest}
   alias NostrBasics.Event.Validator
 
   alias Relay.{Broadcaster, Storage}
@@ -19,7 +21,7 @@ defmodule Relay.Connection do
         |> Broadcaster.send()
 
       {:error, message} ->
-        IO.inspect(message, label: "VALIDATION ERROR")
+        Logger.error("VALIDATION ERROR: #{message}")
     end
   end
 
@@ -32,20 +34,20 @@ defmodule Relay.Connection do
     end
   end
 
-  defp dispatch({:close, subscription_id}, _peer) do
-    IO.inspect(subscription_id, label: "CLOSE COMMAND")
+  defp dispatch({:close, %CloseRequest{subscription_id: subscription_id}}, _peer) do
+    Logger.debug("CLOSE COMMAND: #{inspect(subscription_id)}")
 
     []
   end
 
   defp dispatch({:unknown, unknown_message}, _peer) do
-    IO.inspect(unknown_message, label: "UNKNOWN MESSAGE")
+    Logger.debug("UNKNOWN MESSAGE: #{inspect(unknown_message)}")
 
     []
   end
 
   def terminate(peer) do
-    IO.inspect(peer, label: "TERMINATE in Relay.Request")
+    Logger.debug("TERMINATE: #{inspect(peer)}")
   end
 
   defp get_stored_events(_filter) do
@@ -53,7 +55,8 @@ defmodule Relay.Connection do
   end
 
   defp broadcast_events(_events, subscription_id) do
-    IO.inspect(subscription_id, label: "SENDING EOS TO #{subscription_id}")
+    Logger.debug("SENDING EOS TO: #{inspect(subscription_id)}")
+
     Broadcaster.send_end_of_stored_events(subscription_id)
 
     :ok

@@ -1,4 +1,6 @@
 defmodule Relay.Broadcaster do
+  require Logger
+
   alias NostrBasics.{Event}
 
   alias Relay.Connection.Filters
@@ -24,7 +26,7 @@ defmodule Relay.Broadcaster do
     for {pid, _filter} <- subscriptions do
       json = Jason.encode!(["EOSE", subscription_id])
 
-      IO.inspect(json, label: "SENDING TO #{inspect(pid)}")
+      Logger.info("SENDING TO #{inspect(pid)} #{inspect(json)}")
 
       send(pid, {:emit, json})
     end
