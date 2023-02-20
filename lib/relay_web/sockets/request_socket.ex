@@ -1,6 +1,8 @@
 defmodule RelayWeb.Sockets.RequestSocket do
   @behaviour Phoenix.Socket.Transport
 
+  require Logger
+
   alias Relay.Connection
 
   @impl true
@@ -10,8 +12,6 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def connect(%{connect_info: %{peer_data: peer}} = state) do
-    IO.inspect(peer, label: "INCOMING CONNECTION")
-
     {:ok, state}
   end
 
@@ -43,14 +43,14 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def handle_info({:emit, json}, state) do
-    IO.inspect(json, label: "SENDING")
+    Logger.debug("SENDING #{json}")
 
     {:reply, :ok, {:text, json}, state}
   end
 
   @impl true
   def handle_info(stuff, state) do
-    IO.inspect(stuff, label: "HANDLE INFO")
+    Logger.debug("HANDLE INFO #{stuff}")
 
     {:ok, state}
   end
@@ -62,7 +62,8 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def handle_control(stuff, state) do
-    IO.inspect(stuff, label: "HANDLE CONTROL")
+    Logger.debug("HANDLE CONTROL #{stuff}")
+
     {:ok, state}
   end
 
