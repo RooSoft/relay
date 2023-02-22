@@ -17,6 +17,7 @@ defmodule RelayWeb.Router do
   scope "/", RelayWeb do
     pipe_through(:browser)
 
+    live("/", HomeLive, :home)
     get("/admin", PageController, :home)
   end
 

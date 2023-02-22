@@ -1,6 +1,8 @@
 defmodule RelayWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :relay
 
+  alias RelayWeb.Plugs.SocketDispatcher
+
   @ping_timeout Application.compile_env(:relay, :ping_timeout, 30_000)
   @connection_timeout Application.compile_env(:relay, :connection_timeout, 60_000)
 
@@ -14,12 +16,12 @@ defmodule RelayWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  socket("/", RelayWeb.Sockets.RequestSocket,
+  plug(SocketDispatcher,
     websocket: [
       path: "",
-      timeout: @connection_timeout,
-      ping: @ping_timeout,
-      connect_info: [:peer_data, :user_agent],
+      connection_timeout: @connection_timeout,
+      ping_timeout: @ping_timeout,
+      connect_info: [:peer_data, :user_agent, :uri, :x_headers],
       compress: true
     ],
     longpoll: false

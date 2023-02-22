@@ -19,7 +19,7 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def init(%{options: options} = state) do
-    ping_timeout = Keyword.get(options, :ping)
+    ping_timeout = Map.get(options, :ping_timeout, 30_000)
 
     Process.send_after(self(), :ping, ping_timeout)
 
@@ -36,7 +36,7 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   @impl true
   def handle_info(:ping, %{options: options} = state) do
-    ping_timeout = Keyword.get(options, :ping)
+    ping_timeout = Map.get(options, :ping_timeout, 30_000)
 
     Process.send_after(self(), :ping, ping_timeout)
 
