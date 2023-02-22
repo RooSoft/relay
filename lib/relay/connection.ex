@@ -39,6 +39,8 @@ defmodule Relay.Connection do
   defp dispatch({:close, %CloseRequest{subscription_id: subscription_id}}, _peer) do
     Logger.debug("CLOSE COMMAND: #{inspect(subscription_id)}")
 
+    Filters.remove_subscription(subscription_id)
+
     []
   end
 
