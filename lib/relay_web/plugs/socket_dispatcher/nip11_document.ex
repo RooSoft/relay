@@ -17,7 +17,7 @@ defmodule RelayWeb.Plugs.SocketDispatcher.Nip11Document do
       contact: Map.get(nip_11_document, :contact, "default contact"),
       supported_nips: Map.get(nip_11_document, :supported_nips, "default nips"),
       software: Map.get(nip_11_document, :software, "default software"),
-      version: Mix.Project.config()[:version]
+      version: get_application_version()
       # limitation: %{
       #   max_message_length: Map.get(limitation, :max_message_length, "default"),
       #   max_subscriptions: Map.get(limitation, :max_subscriptions, "default"),
@@ -33,5 +33,12 @@ defmodule RelayWeb.Plugs.SocketDispatcher.Nip11Document do
       # }
     }
     |> Jason.encode!()
+  end
+
+  defp get_application_version do
+    case :application.get_key(:relay, :vsn) do
+      {:ok, version} -> to_string(version)
+      _ -> "unknown"
+    end
   end
 end
