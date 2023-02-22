@@ -18,6 +18,6 @@ defmodule RelayWeb.AdminLive do
 
   defp group_by_pid(filter_list) do
     filter_list
-    |> Enum.group_by(fn {sub, pid, filter} -> pid end)
+    |> Enum.group_by(fn {_sub, pid, _filter} -> pid end)
   end
 end
