@@ -23,6 +23,8 @@ defmodule Relay.Application do
       {Registry, [keys: :duplicate, name: Registry.Filters]}
     ]
 
+    Relay.Nostr.Filters.Subscriptions.init()
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Relay.Supervisor]
