@@ -5,7 +5,7 @@ defmodule Relay.Nostr.Filters do
   def add(%Filter{subscription_id: subscription_id} = filter) do
     Registry.register(Registry.Filters, subscription_id, filter)
 
-    Subscriptions.dispatch(filter, :added_filter)
+    Subscriptions.dispatch_added_filter(filter)
 
     filter
   end
@@ -13,7 +13,7 @@ defmodule Relay.Nostr.Filters do
   def remove_subscription(subscription_id) do
     Registry.unregister(Registry.Filters, subscription_id)
 
-    Subscriptions.dispatch(subscription_id, :removed_subscription)
+    Subscriptions.dispatch_removed_subscription(subscription_id)
   end
 
   def list() do

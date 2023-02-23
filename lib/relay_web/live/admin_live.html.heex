@@ -2,11 +2,11 @@
   Subscriptions
 </div>
 <div class="text-sm">
-  <%= for pid <- Map.keys(@subscriptions) do %>
+  <%= for pid <- Map.keys(@filters) do %>
     <div class="text-xl font-bold">
-      <%= inspect(pid) %> -- <%= Map.get(@subscriptions, pid) |> Enum.count() %> filters
+      <%= inspect(pid) %> -- <%= Map.get(@filters, pid) |> Enum.count() %> filters
       <div class="p-4 text-sm font-normal">
-        <%= for {sub, _pid, filter} <- Map.get(@subscriptions, pid) do %>
+        <%= for {sub, _pid, filter} <- Map.get(@filters, pid) do %>
           <div>
             <%= sub %>
             <%= inspect(filter) %>

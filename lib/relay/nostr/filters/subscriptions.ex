@@ -11,9 +11,17 @@ defmodule Relay.Nostr.Filters.Subscriptions do
     Registry.unregister(Registry.FilterSubscribers, self())
   end
 
-  def dispatch(filter, title) do
+  def dispatch_added_filter(filter) do
+    dispatch({:added_filter, self(), filter})
+  end
+
+  def dispatch_removed_subscription(subscription_id) do
+    dispatch({:removed_subscription, self(), subscription_id})
+  end
+
+  defp dispatch(message) do
     for pid <- get_all_filter_subscriber_pids() do
-      send(pid, {title, filter})
+      send(pid, message)
     end
   end
 

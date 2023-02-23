@@ -9,27 +9,27 @@ defmodule RelayWeb.AdminLive do
   def mount(_params, _session, socket) do
     subscribe_filter_events()
 
-    subscriptions =
+    filters =
       Filters.list()
       |> group_by_pid
 
     {
       :ok,
       socket
-      |> assign(:subscriptions, subscriptions)
+      |> assign(:filters, filters)
     }
   end
 
   @impl true
-  def handle_info({:added_filter, filter}, state) do
-    IO.inspect(filter, label: "ADDED FILTER")
+  def handle_info({:added_filter, pid, filter}, state) do
+    IO.inspect(filter, label: "ADDED FILTER #{inspect(pid)}")
 
     {:noreply, state}
   end
 
   @impl true
-  def handle_info({:removed_subscription, subscription_id}, state) do
-    IO.inspect(subscription_id, label: "REMOVED SUBSCRIPTION")
+  def handle_info({:removed_subscription, pid, subscription_id}, state) do
+    IO.inspect(subscription_id, label: "REMOVED SUBSCRIPTION #{inspect(pid)}")
 
     {:noreply, state}
   end
