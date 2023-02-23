@@ -1,11 +1,11 @@
-<div class="p-2 bg-emerald-200">
+<div class="p-2 mb-4 bg-purple-200 bg-opacity-20">
   Subscriptions
 </div>
 <div class="text-sm">
   <%= for pid <- Map.keys(@filters) do %>
-    <div class="text-xl font-bold">
+    <div class="text-lg font-bold">
       <%= inspect(pid) %> -- <%= Map.get(@filters, pid) |> Enum.count() %> filters
-      <div class="p-4 text-sm font-normal">
+      <div class="p-4 text-xs">
         <%= for {sub, _pid, filter} <- Map.get(@filters, pid) do %>
           <div>
             <%= sub %>
