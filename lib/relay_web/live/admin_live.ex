@@ -2,6 +2,8 @@ defmodule RelayWeb.AdminLive do
   use RelayWeb, :live_view
   require Logger
 
+  import RelayWeb.Live.Components.Filter
+
   alias Relay.Nostr.Filters
 
   @impl true
