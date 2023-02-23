@@ -18,7 +18,7 @@ defmodule Relay.Nostr.Connection do
     case Validator.validate_event(event) do
       :ok ->
         event
-        |> Storage.record()
+        |> Storage.record_event()
         |> Broadcaster.send()
 
       {:error, message} ->
@@ -26,13 +26,11 @@ defmodule Relay.Nostr.Connection do
     end
   end
 
-  defp dispatch({:req, filters}, _peer) do
-    for filter <- filters do
-      Filters.add(filter)
-
-      get_stored_events(filter)
-      |> broadcast_events(filter.subscription_id)
-    end
+  defp dispatch({:req, filters}, peer) do
+    filters
+    |> add_filters
+    |> stream_past_events
+    |> broadcast_eose
   end
 
   defp dispatch({:close, %CloseRequest{subscription_id: subscription_id}}, _peer) do
@@ -53,15 +51,39 @@ defmodule Relay.Nostr.Connection do
     Logger.debug("TERMINATE: #{inspect(peer)}")
   end
 
-  defp get_stored_events(_filter) do
-    []
+  defp add_filters(filters) do
+    filters
+    |> Enum.each(&Filters.add/1)
+
+    filters
   end
 
-  defp broadcast_events(_events, subscription_id) do
-    Logger.debug("SENDING EOS TO: #{inspect(subscription_id)}")
+  defp stream_past_events(filters) when is_list(filters) do
+    filters
+    |> Enum.each(&stream_past_events/1)
 
-    Broadcaster.send_end_of_stored_events(subscription_id)
+    filters
+  end
 
-    :ok
+  defp stream_past_events(filter) do
+    ## fetch events from an enventual database
+    ## send them to pids related to that filter
+
+    filter
+  end
+
+  defp broadcast_eose(filters) do
+    IO.inspect(filters, label: "BROADCAST EOSE")
+
+    filters
+    |> Enum.map(&Map.get(&1, :subscription_id))
+    |> Enum.uniq()
+    |> IO.inspect(label: "UNIQ")
+    |> Enum.each(fn subscription_id ->
+      IO.puts("S: #{subscription_id}")
+      Broadcaster.send_end_of_stored_events(self(), subscription_id)
+    end)
+
+    filters
   end
 end

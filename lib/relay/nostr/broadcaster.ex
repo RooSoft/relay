@@ -18,17 +18,9 @@ defmodule Relay.Nostr.Broadcaster do
     end
   end
 
-  def send_end_of_stored_events(subscription_id) do
-    subscriptions =
-      Filters.list()
-      |> Enum.filter(fn {filter_subscription_id, _pid, _filter} ->
-        filter_subscription_id == subscription_id
-      end)
+  def send_end_of_stored_events(pid, subscription_id) do
+    json = Jason.encode!(["EOSE", subscription_id])
 
-    for {pid, _filter} <- subscriptions do
-      json = Jason.encode!(["EOSE", subscription_id])
-
-      send(pid, {:emit, json})
-    end
+    send(pid, {:emit, json})
   end
 end
