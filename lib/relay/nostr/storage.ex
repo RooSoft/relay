@@ -1,4 +1,4 @@
-defmodule Relay.Storage do
+defmodule Relay.Nostr.Storage do
   require Logger
 
   def record(event) do

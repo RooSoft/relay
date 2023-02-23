@@ -1,11 +1,10 @@
-defmodule Relay.Connection do
+defmodule Relay.Nostr.Connection do
   require Logger
 
   alias NostrBasics.{ClientMessage, CloseRequest, Event}
   alias NostrBasics.Event.Validator
 
-  alias Relay.{Broadcaster, Storage}
-  alias Relay.Connection.Filters
+  alias Relay.Nostr.{Broadcaster, Filters, Storage}
 
   def handle(request, peer) do
     request

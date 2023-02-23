@@ -1,4 +1,4 @@
-defmodule Relay.Broadcaster.ApplyFilter do
+defmodule Relay.Nostr.Broadcaster.ApplyFilter do
   @moduledoc """
   Makes sure an event matches a filter
   """

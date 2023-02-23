@@ -1,4 +1,4 @@
-defmodule Relay.Connection.Filters do
+defmodule Relay.Nostr.Filters do
   alias NostrBasics.{Filter}
 
   def add(%Filter{subscription_id: subscription_id} = filter) do

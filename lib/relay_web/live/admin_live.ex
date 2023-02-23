@@ -2,11 +2,13 @@ defmodule RelayWeb.AdminLive do
   use RelayWeb, :live_view
   require Logger
 
+  alias Relay.Nostr.Filters
+
   @impl true
   @spec mount(any, any, Phoenix.LiveView.Socket.t()) :: {:ok, Phoenix.LiveView.Socket.t()}
   def mount(_params, _session, socket) do
     subscriptions =
-      Relay.Connection.Filters.list()
+      Filters.list()
       |> group_by_pid
 
     {

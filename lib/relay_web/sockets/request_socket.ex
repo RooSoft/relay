@@ -3,7 +3,7 @@ defmodule RelayWeb.Sockets.RequestSocket do
 
   require Logger
 
-  alias Relay.Connection
+  alias Relay.Nostr.Connection
 
   @impl true
   def child_spec(_opts) do

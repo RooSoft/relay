@@ -1,10 +1,10 @@
-defmodule Relay.Broadcaster do
+defmodule Relay.Nostr.Broadcaster do
   require Logger
 
   alias NostrBasics.{Event}
 
-  alias Relay.Connection.Filters
-  alias Relay.Broadcaster.ApplyFilter
+  alias Relay.Nostr.Filters
+  alias Relay.Nostr.Broadcaster.ApplyFilter
 
   def send(%Event{} = event) do
     for {subscription_id, pid, filter} <- Filters.list() do
