@@ -26,7 +26,7 @@ defmodule Relay.Nostr.Connection do
     end
   end
 
-  defp dispatch({:req, filters}, peer) do
+  defp dispatch({:req, filters}, _peer) do
     filters
     |> add_filters
     |> stream_past_events
@@ -73,14 +73,10 @@ defmodule Relay.Nostr.Connection do
   end
 
   defp broadcast_eose(filters) do
-    IO.inspect(filters, label: "BROADCAST EOSE")
-
     filters
     |> Enum.map(&Map.get(&1, :subscription_id))
     |> Enum.uniq()
-    |> IO.inspect(label: "UNIQ")
     |> Enum.each(fn subscription_id ->
-      IO.puts("S: #{subscription_id}")
       Broadcaster.send_end_of_stored_events(self(), subscription_id)
     end)
 
