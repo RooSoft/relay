@@ -1,4 +1,4 @@
-<div class="p-2 mb-4 bg-purple-200 bg-opacity-20">
+<div class="pt-2 pl-2 pb-1 mb-4 bg-purple-200 bg-opacity-20 font-title">
   Subscriptions
 </div>
 <div class="text-sm">
@@ -8,8 +8,12 @@
       <div class="p-4 text-xs">
         <%= for {sub, _pid, filter} <- Map.get(@filters, pid) do %>
           <div>
-            <%= sub %>
-            <%= inspect(filter) %>
+            <div class="mb-2 font-hex">
+              <%= sub %>
+            </div>
+            <div class="mb-4 font-hex">
+              <%= inspect(filter) %>
+            </div>
           </div>
         <% end %>
       </div>

@@ -11,7 +11,10 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      data: ["Martian Mono", "monospace"],
+      'regular': ["Ubuntu"],
+      'hex': ["Montserrat"],
+      'data': ["Martian Mono", "monospace"],
+      'title': ["Aclonica"]
     },
     extend: {
       backgroundColor: theme => ({
