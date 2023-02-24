@@ -4,16 +4,20 @@
 <div class="text-sm">
   <%= for pid <- Map.keys(@filters) do %>
     <div class="text-lg font-bold">
-      <%= inspect(pid) %> -- <%= Map.get(@filters, pid) |> Enum.count() %> filters
-      <div class="p-4 text-xs">
-        <%= for {sub, _pid, filter} <- Map.get(@filters, pid) do %>
-          <div>
-            <div class="mb-2 font-hex">
-              <%= sub %>
-            </div>
-            <div class="pl-4 mb-4 font-hex">
-              <.filter filter={filter} />
-            </div>
+      <% pid_filters = Map.get(@filters, pid) %>
+      <div><%= inspect(pid) %> -- <%= pid_filters |> Enum.count() %> subscriptions</div>
+      <div class="ml-4">
+        <%= for subscription_id <- Map.keys(pid_filters) do %>
+          <% subscription_filters = Map.get(pid_filters, subscription_id) %>
+          <div class="mb-2 text-base"><%= subscription_id %> -- <%= subscription_filters |> Enum.count() %> filters</div>
+          <div class="ml-4 text-xs">
+            <%= for {_sub, _pid, filter} <- subscription_filters do %>
+              <div>
+                <div class="mb-4 font-hex">
+                  <.filter filter={filter} />
+                </div>
+              </div>
+            <% end %>
           </div>
         <% end %>
       </div>

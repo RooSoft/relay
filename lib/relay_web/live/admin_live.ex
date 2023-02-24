@@ -44,6 +44,7 @@ defmodule RelayWeb.AdminLive do
     filters =
       Filters.list()
       |> group_by_pid
+      |> subgroup_by_subscription_id
 
     socket
     |> assign(:filters, filters)
@@ -52,5 +53,23 @@ defmodule RelayWeb.AdminLive do
   defp group_by_pid(filter_list) do
     filter_list
     |> Enum.group_by(fn {_sub, pid, _filter} -> pid end)
+  end
+
+  defp subgroup_by_subscription_id(filter_list) do
+    keys = Map.keys(filter_list)
+
+    values =
+      Enum.map(keys, fn key ->
+        Map.get(filter_list, key, [])
+        |> group_by_subscription_id()
+      end)
+
+    Enum.zip(keys, values)
+    |> Enum.into(%{})
+  end
+
+  defp group_by_subscription_id(filter_list) do
+    filter_list
+    |> Enum.group_by(fn {subscription_id, _pid, _filter} -> subscription_id end)
   end
 end
