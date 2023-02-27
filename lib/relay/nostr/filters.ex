@@ -30,6 +30,14 @@ defmodule Relay.Nostr.Filters do
     filter
   end
 
+  @doc """
+  Removes a subscription to the list
+
+  ## Examples
+
+      iex> Relay.Nostr.Filters.remove_subscription("a_subscription_id")
+  """
+  @spec remove_subscription(String.t()) :: list()
   def remove_subscription(subscription_id) do
     Registry.unregister(Registry.Filters, subscription_id)
 
