@@ -61,6 +61,14 @@ defmodule Relay.Nostr.Filters do
     Registry.select(Registry.Filters, spec)
   end
 
+  @doc """
+  Returns a count of all the filters
+
+  ## Examples
+
+      iex> Relay.Nostr.Filters.count()
+  """
+  @spec count() :: integer()
   def count() do
     list()
     |> Enum.count()
