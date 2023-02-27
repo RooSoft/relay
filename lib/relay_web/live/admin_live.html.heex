@@ -1,7 +1,7 @@
 <div class="pt-2 pl-2 pb-1 mb-4 bg-purple-200 bg-opacity-20 font-title">
   Subscriptions
 </div>
-<div class="text-sm">
+<div class="px-2 text-sm">
   <%= for pid <- Map.keys(@filters) do %>
     <div class="text-lg font-bold">
       <% pid_filters = Map.get(@filters, pid) %>
