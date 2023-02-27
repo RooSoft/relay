@@ -1,7 +1,27 @@
 defmodule Relay.Nostr.Filters do
+  @moduledoc """
+  Keeps a list of filters indexed by socket PID, and makes sure to drop them
+  when the socket closes.
+  """
+
   alias NostrBasics.{Filter}
   alias Relay.Nostr.Filters.Subscriptions
 
+  @doc """
+  Add a filter to the list
+
+  ## Examples
+
+      iex> ~s({"kinds":[1],"limit":10})
+      ...> |> NostrBasics.Filter.from_req!("a_subscription_id")
+      ...> |> Relay.Nostr.Filters.add()
+      %NostrBasics.Filter{
+        subscription_id: "a_subscription_id",
+        limit: 10,
+        kinds: [1]
+      }
+  """
+  @spec add(Filter.t()) :: Filter.t()
   def add(%Filter{subscription_id: subscription_id} = filter) do
     Registry.register(Registry.Filters, subscription_id, filter)
 
