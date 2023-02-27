@@ -44,6 +44,15 @@ defmodule Relay.Nostr.Filters do
     Subscriptions.dispatch_removed_subscription(subscription_id)
   end
 
+  @doc """
+  Returns all the filters in a tuple also containing the subscription id and the pid
+
+  ## Examples
+
+      iex> Relay.Nostr.Filters.list()
+      []
+  """
+  @spec list() :: list()
   def list() do
     match_pattern = {:"$1", :"$2", :"$3"}
     guards = []
