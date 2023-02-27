@@ -1,9 +1,9 @@
-defmodule Relay.Connection.FiltersTest do
+defmodule Relay.Nostr.Connection.FiltersTest do
   use ExUnit.Case, async: true
 
   alias NostrBasics.{Filter}
 
-  alias Relay.Connection.Filters
+  alias Relay.Nostr.Filters
   alias Relay.Support.Generators
 
   doctest Filters

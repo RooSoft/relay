@@ -14,7 +14,7 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
       ...> kind = 1
       ...> filter = %NostrBasics.Filter{ids: [id], authors: [author], kinds: [kind]}
       ...> event = %NostrBasics.Event{id: id, pubkey: author, kind: kind}
-      ...> |> Relay.Broadcaster.ApplyFilter.all(filter)
+      ...> |> Relay.Nostr.Broadcaster.ApplyFilter.all(filter)
       event
   """
   @spec all(Event.t(), Filter.t()) :: Event.t() | nil
@@ -34,13 +34,13 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
       iex> id = "cabf522ac94121ffc04a07265960fc5e"
       ...> filter = %NostrBasics.Filter{ids: [id]}
       ...> event = %NostrBasics.Event{id: id}
-      ...> Relay.Broadcaster.ApplyFilter.by_id(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_id(event, filter)
       event
 
       iex> id = "cabf522ac94121ffc04a07265960fc5e"
       ...> filter = %NostrBasics.Filter{ids: [id]}
       ...> event = %NostrBasics.Event{id: String.reverse(id)}
-      ...> Relay.Broadcaster.ApplyFilter.by_id(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_id(event, filter)
       nil
   """
   def by_id(nil, _), do: nil
@@ -58,13 +58,13 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
       iex> author = <<0xee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74::256>>
       ...> filter = %NostrBasics.Filter{authors: [author]}
       ...> event = %NostrBasics.Event{pubkey: author}
-      ...> Relay.Broadcaster.ApplyFilter.by_author(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_author(event, filter)
       event
 
       iex> author = <<0xee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74::256>>
       ...> filter = %NostrBasics.Filter{authors: [author]}
       ...> event = %NostrBasics.Event{pubkey: Binary.reverse(author)}
-      ...> Relay.Broadcaster.ApplyFilter.by_author(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_author(event, filter)
       nil
   """
   def by_author(nil, _), do: nil
@@ -82,13 +82,13 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
       iex> kind = 1
       ...> filter = %NostrBasics.Filter{kinds: [kind]}
       ...> event = %NostrBasics.Event{kind: kind}
-      ...> Relay.Broadcaster.ApplyFilter.by_kind(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_kind(event, filter)
       event
 
       iex> kind = 1
       ...> filter = %NostrBasics.Filter{kinds: [kind]}
       ...> event = %NostrBasics.Event{kind: kind+1}
-      ...> Relay.Broadcaster.ApplyFilter.by_kind(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_kind(event, filter)
       nil
   """
   def by_kind(nil, _), do: nil
@@ -108,21 +108,21 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
       ...> filter = %NostrBasics.Filter{e: [event_id]}
       ...> e_tag = ["e", event_id, ""]
       ...> event = %NostrBasics.Event{tags: [e_tag]}
-      ...> Relay.Broadcaster.ApplyFilter.by_event_tag(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_event_tag(event, filter)
       event
 
       #### applying filtering on an event with no tag, should be filtered out
       iex> event_id = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
       ...> filter = %NostrBasics.Filter{e: [event_id]}
       ...> event = %NostrBasics.Event{tags: []}
-      ...> Relay.Broadcaster.ApplyFilter.by_event_tag(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_event_tag(event, filter)
       nil
 
       #### applying filtering with an empty event tag, should pass
       iex> event_id = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
       ...> filter = %NostrBasics.Filter{e: []}
       ...> event = %NostrBasics.Event{tags: [event_id]}
-      ...> Relay.Broadcaster.ApplyFilter.by_event_tag(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_event_tag(event, filter)
       event
 
       #### filtering for an event list the event is not a part of, should be filtered out
@@ -132,7 +132,7 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
       ...> filter = %NostrBasics.Filter{e: [wrong_event_id_1, wrong_event_id_2]}
       ...> e_tag = ["e", event_id, ""]
       ...> event = %NostrBasics.Event{tags: [e_tag]}
-      ...> Relay.Broadcaster.ApplyFilter.by_event_tag(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_event_tag(event, filter)
       nil
 
       #### filtering for an event list the event is a part of, should pass
@@ -142,7 +142,7 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
       ...> filter = %NostrBasics.Filter{e: [wrong_event_id_1, event_id, wrong_event_id_2]}
       ...> e_tag = ["e", event_id, ""]
       ...> event = %NostrBasics.Event{tags: [e_tag]}
-      ...> Relay.Broadcaster.ApplyFilter.by_event_tag(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_event_tag(event, filter)
       event
   """
   def by_event_tag(nil, _), do: nil
@@ -162,21 +162,21 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
       ...> filter = %NostrBasics.Filter{p: [pubkey]}
       ...> p_tag = ["p", pubkey, ""]
       ...> event = %NostrBasics.Event{tags: [p_tag]}
-      ...> Relay.Broadcaster.ApplyFilter.by_person_tag(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_person_tag(event, filter)
       event
 
       #### applying a filter on an event with no tag, should be filtered out
       iex> pubkey = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
       ...> filter = %NostrBasics.Filter{p: [pubkey]}
       ...> event = %NostrBasics.Event{tags: []}
-      ...> Relay.Broadcaster.ApplyFilter.by_person_tag(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_person_tag(event, filter)
       nil
 
       #### applying filtering with an empty person tag, should pass
       iex> pubkey = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
       ...> filter = %NostrBasics.Filter{p: []}
       ...> event = %NostrBasics.Event{tags: [pubkey]}
-      ...> Relay.Broadcaster.ApplyFilter.by_person_tag(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_person_tag(event, filter)
       event
 
       #### filtering for an event list the event is not a part of, should be filtered out
@@ -186,7 +186,7 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
       ...> filter = %NostrBasics.Filter{p: [wrong_pubkey_1, wrong_pubkey_2]}
       ...> p_tag = ["p", pubkey, ""]
       ...> event = %NostrBasics.Event{tags: [p_tag]}
-      ...> Relay.Broadcaster.ApplyFilter.by_person_tag(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_person_tag(event, filter)
       nil
 
       #### filtering for an event list the event is a part of, should pass
@@ -196,7 +196,7 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
       ...> filter = %NostrBasics.Filter{p: [wrong_pubkey_1, pubkey, wrong_pubkey_2]}
       ...> p_tag = ["p", pubkey, ""]
       ...> event = %NostrBasics.Event{tags: [p_tag]}
-      ...> Relay.Broadcaster.ApplyFilter.by_event_tag(event, filter)
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_event_tag(event, filter)
       event
   """
   def by_person_tag(nil, _), do: nil

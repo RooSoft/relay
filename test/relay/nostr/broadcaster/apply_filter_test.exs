@@ -1,8 +1,8 @@
-defmodule Relay.Broadcaster.ApplyFilterTest do
+defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
   use ExUnit.Case, async: true
 
   alias NostrBasics.{Event, Filter}
-  alias Relay.Broadcaster.ApplyFilter
+  alias Relay.Nostr.Broadcaster.ApplyFilter
 
   doctest ApplyFilter
 
