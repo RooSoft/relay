@@ -11,6 +11,14 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
 
   doctest ApplyFilter
 
+  setup_all do
+    events = Storage.Events.get()
+    notes = Storage.Events.get_notes(events)
+    reactions = Storage.Events.get_reactions(events)
+
+    %{events: events, notes: notes, reactions: reactions}
+  end
+
   test "same as a doctest, easier to debug from here" do
     pubkey = "ee6ea13ab9fe5c4a68eaf9b1a34fe014a66b40117c50ee2a614f4cda959b6e74"
     wrong_pubkey_1 = "c48389c1ba5a8b38da3ff7f3bb2c6cdee09f962d6155b784e6ee43a2829fa224"
@@ -26,9 +34,7 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
     assert nil == filter_result
   end
 
-  test "filter a notes list with kind 1, make sure none gets filtered out" do
-    notes = Storage.Events.get_notes()
-
+  test "filter a notes list with kind 1, make sure none gets filtered out", %{notes: notes} do
     same_notes =
       notes
       |> Enum.map(&ApplyFilter.all(&1, %Filter{kinds: [@note_kind]}))
@@ -37,9 +43,7 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
     assert notes == same_notes
   end
 
-  test "filter a notes list with kind 7, make sure they all get filtered out" do
-    notes = Storage.Events.get_notes()
-
+  test "filter a notes list with kind 7, make sure they all get filtered out", %{notes: notes} do
     nothing =
       notes
       |> Enum.map(&ApplyFilter.all(&1, %Filter{kinds: [@reaction_kind]}))

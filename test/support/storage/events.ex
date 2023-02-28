@@ -11,9 +11,19 @@ defmodule Relay.Support.Storage.Events do
     |> Enum.to_list()
   end
 
+  def get_notes(events) do
+    events
+    |> Enum.filter(&(&1.kind == 1))
+  end
+
   def get_reactions do
     get()
     |> Stream.filter(&(&1.kind == 7))
     |> Enum.to_list()
+  end
+
+  def get_reactions(events) do
+    events
+    |> Enum.filter(&(&1.kind == 7))
   end
 end
