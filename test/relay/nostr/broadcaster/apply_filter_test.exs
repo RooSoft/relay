@@ -86,7 +86,7 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
   end
 
   test "filter events for replys to a specific note", %{events: events} do
-    events_with_p_tags =
+    events_with_e_tags =
       events
       |> Enum.map(
         &ApplyFilter.all(&1, %Filter{
@@ -95,12 +95,51 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
         })
       )
       |> Enum.filter(&(&1 != nil))
-      |> Enum.map(& &1.id)
+      |> Enum.map(& &1.content)
 
     assert [
              "Must be a techy guy with cables hanging out of his pockets😄",
              "🤣🤣🤣"
            ] ==
-             events_with_p_tags
+             events_with_e_tags
+  end
+
+  test "filter events by ids", %{events: events} do
+    filtered_events =
+      events
+      |> Enum.map(
+        &ApplyFilter.all(&1, %Filter{
+          ids: [
+            "fd8cf79316c7058e14f400725481a4e29689d87bdf83508c2ef75cb896a61a7d",
+            "5109e7498e879d7962ba8cc867a5815da99ac38eb0f732970b93a23384c4a8df"
+          ]
+        })
+      )
+      |> Enum.filter(&(&1 != nil))
+      |> Enum.map(& &1.id)
+
+    assert [
+             "5109e7498e879d7962ba8cc867a5815da99ac38eb0f732970b93a23384c4a8df",
+             "fd8cf79316c7058e14f400725481a4e29689d87bdf83508c2ef75cb896a61a7d"
+           ] ==
+             filtered_events
+  end
+
+  test "filter events with two person tags, one of them should come out", %{events: events} do
+    filtered_events =
+      events
+      |> Enum.map(
+        &ApplyFilter.all(&1, %Filter{
+          kinds: [1, 7],
+          p: [
+            "be440b434f2c0b6df2ec4e5137bc9c2bd8dae9fe530255eaee3accbf204e818e",
+            "056d6999f3283778d50aa85c25985716857cfeaffdbad92e73cf8aeaf394a5cd"
+          ]
+        })
+      )
+      |> Enum.filter(&(&1 != nil))
+      |> Enum.map(& &1.id)
+
+    assert ["fd8cf79316c7058e14f400725481a4e29689d87bdf83508c2ef75cb896a61a7d"] == filtered_events
   end
 end
