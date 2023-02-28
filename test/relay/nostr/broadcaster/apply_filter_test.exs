@@ -75,7 +75,7 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
       events
       |> Enum.map(
         &ApplyFilter.all(&1, %Filter{
-          kinds: [7],
+          kinds: [@reaction_kind],
           p: ["7fa56f5d6962ab1e3cd424e758c3002b8665f7b0d8dcee9fe9e288d7751ac194"]
         })
       )
@@ -83,5 +83,24 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
       |> Enum.map(& &1.content)
 
     assert ["+", "+", "🤙", "+", "🤙"] == events_with_p_tags
+  end
+
+  test "filter events for replys to a specific note", %{events: events} do
+    events_with_p_tags =
+      events
+      |> Enum.map(
+        &ApplyFilter.all(&1, %Filter{
+          kinds: [@note_kind],
+          e: ["5109e7498e879d7962ba8cc867a5815da99ac38eb0f732970b93a23384c4a8df"]
+        })
+      )
+      |> Enum.filter(&(&1 != nil))
+      |> Enum.map(& &1.id)
+
+    assert [
+             "Must be a techy guy with cables hanging out of his pockets😄",
+             "🤣🤣🤣"
+           ] ==
+             events_with_p_tags
   end
 end
