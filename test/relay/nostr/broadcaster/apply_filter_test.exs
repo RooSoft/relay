@@ -36,4 +36,15 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
 
     assert notes == same_notes
   end
+
+  test "filter a notes list with kind 7, make sure they all get filtered out" do
+    notes = Storage.Events.get_notes()
+
+    nothing =
+      notes
+      |> Enum.map(&ApplyFilter.all(&1, %Filter{kinds: [@reaction_kind]}))
+      |> Enum.filter(&(&1 != nil))
+
+    assert [] == nothing
+  end
 end
