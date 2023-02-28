@@ -51,4 +51,22 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
 
     assert [] == nothing
   end
+
+  test "filter event for notes from a specific poster", %{events: events} do
+    author_s_notes =
+      events
+      |> Enum.map(
+        &ApplyFilter.all(&1, %Filter{
+          kinds: [@note_kind],
+          authors: [<<0x237506CA399E5B1B9CE89455FE960BC98DFAB6A71936772A89C5145720B681F4::256>>]
+        })
+      )
+      |> Enum.filter(&(&1 != nil))
+      |> Enum.map(& &1.content)
+
+    assert [
+             "New ‘Universe 🛸’ (global) is a game changer",
+             "Can’t zap until tomorrow morning … 🥱"
+           ] == author_s_notes
+  end
 end
