@@ -160,4 +160,21 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
 
     assert ["d8bb378d413fda307e0defeabcb0e6e4785fc8cf110a5f25ff82a88811cf92ea"] == filtered_events
   end
+
+  test "very specific filter containing kind, author, and two types of tags", %{events: events} do
+    filtered_events =
+      events
+      |> Enum.map(
+        &ApplyFilter.all(&1, %Filter{
+          kinds: [1],
+          authors: [<<0x2A9C6813E2CD86DCED47191F24DE8B1A05BF098BFCB0667B577A056E1495994E::256>>],
+          p: ["4acaf33b2aec6747bda0fd862ad111c6a4cefd902b1319612fa9e7494ae63125"],
+          e: ["63a2717e24e6db7e9ec18916d94d320eb2b0d79f8b02f2fe7d76b56545c57d21"]
+        })
+      )
+      |> Enum.filter(&(&1 != nil))
+      |> Enum.map(& &1.id)
+
+    assert ["168046489c965a3a7cb619b1648e73f544ec361a7721f2a8f497f44533a68827"] == filtered_events
+  end
 end
