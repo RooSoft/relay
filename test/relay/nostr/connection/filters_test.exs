@@ -43,7 +43,7 @@ defmodule Relay.Nostr.Connection.FiltersTest do
       Generators.Filter.new(kinds: [1]) |> Filters.add()
       Generators.Filter.new(kinds: [1]) |> Filters.add()
 
-      assert 3 == Filters.count()
+      assert original_filter_count + 3 == Filters.count()
 
       send(parent, :done)
     end)
