@@ -52,7 +52,7 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
     assert [] == nothing
   end
 
-  test "filter event for notes from a specific poster", %{events: events} do
+  test "filter events for notes from a specific poster", %{events: events} do
     author_s_notes =
       events
       |> Enum.map(
@@ -68,5 +68,20 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
              "New ‘Universe 🛸’ (global) is a game changer",
              "Can’t zap until tomorrow morning … 🥱"
            ] == author_s_notes
+  end
+
+  test "filter events for reactions with specific person in tags", %{events: events} do
+    events_with_p_tags =
+      events
+      |> Enum.map(
+        &ApplyFilter.all(&1, %Filter{
+          kinds: [7],
+          p: ["7fa56f5d6962ab1e3cd424e758c3002b8665f7b0d8dcee9fe9e288d7751ac194"]
+        })
+      )
+      |> Enum.filter(&(&1 != nil))
+      |> Enum.map(& &1.content)
+
+    assert ["+", "+", "🤙", "+", "🤙"] == events_with_p_tags
   end
 end
