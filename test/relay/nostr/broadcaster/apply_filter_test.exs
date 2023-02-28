@@ -2,7 +2,12 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
   use ExUnit.Case, async: true
 
   alias NostrBasics.{Event, Filter}
+
   alias Relay.Nostr.Broadcaster.ApplyFilter
+  alias Relay.Support.Storage
+
+  @note_kind 1
+  @reaction_kind 7
 
   doctest ApplyFilter
 
@@ -19,5 +24,16 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilterTest do
     filter_result = ApplyFilter.by_person_tag(event, filter)
 
     assert nil == filter_result
+  end
+
+  test "filter a notes list with kind 1, make sure none gets filtered out" do
+    notes = Storage.Events.get_notes()
+
+    same_notes =
+      notes
+      |> Enum.map(&ApplyFilter.all(&1, %Filter{kinds: [@note_kind]}))
+      |> Enum.filter(&(&1 != nil))
+
+    assert notes == same_notes
   end
 end
