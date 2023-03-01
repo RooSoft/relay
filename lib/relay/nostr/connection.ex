@@ -19,7 +19,7 @@ defmodule Relay.Nostr.Connection do
       :ok ->
         event
         |> Storage.record_event()
-        |> Broadcaster.send()
+        |> Broadcaster.send_to_all()
 
       {:error, message} ->
         Logger.error("VALIDATION ERROR: #{message}")

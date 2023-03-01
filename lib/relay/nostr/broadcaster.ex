@@ -6,8 +6,13 @@ defmodule Relay.Nostr.Broadcaster do
   alias Relay.Nostr.Filters
   alias Relay.Nostr.Broadcaster.ApplyFilter
 
-  def send(%Event{} = event) do
-    for {subscription_id, pid, filter} <- Filters.list() do
+  @default_registry Registry.Filters
+
+  @spec send_to_all(Event.t(), list()) :: list()
+  def send_to_all(%Event{} = event, opts \\ []) do
+    registry = Enum.into(opts, %{}) |> Map.get(:registry, @default_registry)
+
+    for {subscription_id, pid, filter} <- Filters.list(registry: registry) do
       if ApplyFilter.all(event, filter) do
         json = Jason.encode!(["EVENT", filter.subscription_id, event])
 
@@ -18,6 +23,7 @@ defmodule Relay.Nostr.Broadcaster do
     end
   end
 
+  @spec send_end_of_stored_events(pid(), String.t()) :: {:emit, String.t()}
   def send_end_of_stored_events(pid, subscription_id) do
     json = Jason.encode!(["EOSE", subscription_id])
 
