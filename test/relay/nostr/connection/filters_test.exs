@@ -56,14 +56,8 @@ defmodule Relay.Nostr.Connection.FiltersTest do
   end
 
   test "create a new registry, make sure it has no filters by default" do
-    registry_name = Generators.Atoms.generate()
-
-    create_registry(registry_name)
+    registry_name = Generators.Registries.generate()
 
     assert 0 == Filters.count(registry: registry_name)
-  end
-
-  defp create_registry(name) do
-    Registry.start_link(keys: :duplicate, name: name)
   end
 end
