@@ -7,6 +7,9 @@ defmodule Relay.Nostr.Filters do
   alias NostrBasics.{Filter}
   alias Relay.Nostr.Filters.Subscriptions
 
+  @default_registry Registry.Filters
+
+
   @doc """
   Add a filter to the list
 
@@ -21,9 +24,11 @@ defmodule Relay.Nostr.Filters do
         kinds: [1]
       }
   """
-  @spec add(Filter.t()) :: Filter.t()
-  def add(%Filter{subscription_id: subscription_id} = filter) do
-    Registry.register(Registry.Filters, subscription_id, filter)
+  @spec add(Filter.t(), list()) :: Filter.t()
+  def add(%Filter{subscription_id: subscription_id} = filter, opts \\ []) do
+    registry = Enum.into(opts, %{}) |> Map.get(:registry, @default_registry)
+
+    Registry.register(registry, subscription_id, filter)
 
     Subscriptions.dispatch_added_filter(filter)
 
@@ -37,9 +42,11 @@ defmodule Relay.Nostr.Filters do
 
       iex> Relay.Nostr.Filters.remove_subscription("a_subscription_id")
   """
-  @spec remove_subscription(String.t()) :: list()
-  def remove_subscription(subscription_id) do
-    Registry.unregister(Registry.Filters, subscription_id)
+  @spec remove_subscription(String.t(), list()) :: list()
+  def remove_subscription(subscription_id, opts \\ []) do
+    registry = Enum.into(opts, %{}) |> Map.get(:registry, @default_registry)
+
+    Registry.unregister(registry, subscription_id)
 
     Subscriptions.dispatch_removed_subscription(subscription_id)
   end
@@ -52,13 +59,15 @@ defmodule Relay.Nostr.Filters do
       iex> Relay.Nostr.Filters.list()
       []
   """
-  @spec list() :: list()
-  def list() do
+  @spec list(list()) :: list()
+  def list(opts \\ []) do
+    registry = Enum.into(opts, %{}) |> Map.get(:registry, @default_registry)
+
     match_pattern = {:"$1", :"$2", :"$3"}
     guards = []
     body = [{{:"$1", :"$2", :"$3"}}]
     spec = [{match_pattern, guards, body}]
-    Registry.select(Registry.Filters, spec)
+    Registry.select(registry, spec)
   end
 
   @doc """
