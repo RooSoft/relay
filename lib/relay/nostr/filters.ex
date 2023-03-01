@@ -9,7 +9,6 @@ defmodule Relay.Nostr.Filters do
 
   @default_registry Registry.Filters
 
-
   @doc """
   Add a filter to the list
 
@@ -77,9 +76,9 @@ defmodule Relay.Nostr.Filters do
 
       iex> Relay.Nostr.Filters.count()
   """
-  @spec count() :: integer()
-  def count() do
-    list()
+  @spec count(list()) :: integer()
+  def count(opts \\ []) do
+    list(opts)
     |> Enum.count()
   end
 end
