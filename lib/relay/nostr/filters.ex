@@ -55,7 +55,8 @@ defmodule Relay.Nostr.Filters do
 
   ## Examples
 
-      iex> Relay.Nostr.Filters.list()
+      iex> registry_name = Relay.Support.Generators.Registries.generate()
+      ...> Relay.Nostr.Filters.list(registry: registry_name)
       []
   """
   @spec list(list()) :: list()
