@@ -60,6 +60,42 @@ defmodule Relay.Nostr.BroadcasterTest do
     assert_receive(:event_received, 1000)
   end
 
+  test "send an event and filter out a socket", %{event: event, json: event_json} do
+    registry_name = Generators.Registries.generate()
+    filters = [Generators.Filter.new(kinds: [0]), Generators.Filter.new(kinds: [1])]
+    parent = self()
+
+    for filter <- filters do
+      spawn(fn ->
+        Filters.add(filter, registry: registry_name)
+        expected_json = ~s(["EVENT","#{filter.subscription_id}",#{event_json}])
+
+        send(parent, :filter_added)
+
+        case filter.kinds do
+          [1] ->
+            assert_receive({:emit, ^expected_json}, 1000)
+            send(parent, :event_received)
+
+          _ ->
+            refute_receive({:emit, ^expected_json}, 500)
+            send(parent, :no_event_received)
+        end
+      end)
+
+      receive do
+        :filter_added -> :ok
+      after
+        1000 -> :error
+      end
+    end
+
+    Broadcaster.send_to_all(event, registry: registry_name)
+
+    assert_receive(:event_received, 1000)
+    assert_receive(:no_event_received, 1000)
+  end
+
   test "send EOSE to the current process" do
     Broadcaster.send_end_of_stored_events(self(), "3456-5432")
 
