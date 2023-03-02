@@ -34,9 +34,11 @@ defmodule Relay.Nostr.ConnectionTest do
     author_request =
       ~s(["REQ","#{subscription_id}",{"authors":["efc83f01c8fb309df2c8866b8c7924cc8b6f0580afdde1d6e16e2b6107c2862c"]}])
 
+    expected_eose = ~s(["EOSE","#{subscription_id}"])
+
     Connection.handle(author_request, peer)
 
-    assert_receive({:emit, ~s(["EOSE","67890-12345"])}, 1000)
+    assert_receive({:emit, ^expected_eose}, 1000)
 
     event_json =
       Generators.Events.example()
@@ -46,8 +48,33 @@ defmodule Relay.Nostr.ConnectionTest do
 
     Connection.handle(send_event, peer)
 
-    emit_json = ~s(["EVENT","67890-12345",#{event_json}])
+    emit_json = ~s(["EVENT","#{subscription_id}",#{event_json}])
 
     assert_receive({:emit, ^emit_json}, 1000)
+  end
+
+  test "make a request for some author and send an event from another, no notification" do
+    peer = %{address: "127.0.0.1"}
+
+    subscription_id = "678901234-5"
+
+    author_request =
+      ~s(["REQ","#{subscription_id}",{"authors":["c8b6f0580afdde1d6e16e2b6107c2862cefc83f01c8fb309df2c8866b8c7924c"]}])
+
+    expected_eose = ~s(["EOSE","#{subscription_id}"])
+
+    Connection.handle(author_request, peer)
+
+    assert_receive({:emit, ^expected_eose}, 1000)
+
+    event_json =
+      Generators.Events.example()
+      |> Jason.encode!()
+
+    send_event = ~s(["EVENT",#{event_json}])
+
+    Connection.handle(send_event, peer)
+
+    refute_receive(_, 1000)
   end
 end
