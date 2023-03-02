@@ -32,4 +32,16 @@ defmodule Relay.Nostr.Filters.SubscriptionsTest do
 
     assert_receive({:removed_subscription, ^self_pid, ^subscription_id}, 1000)
   end
+
+  test "subscribe to a new registry, unsubscribe to it, send a filter and make sure nothing happens" do
+    registry_name = Generators.Atoms.generate()
+    subscription_id = Generators.Atoms.generate()
+
+    Subscriptions.init(registry: registry_name)
+    Subscriptions.subscribe(registry: registry_name)
+    Subscriptions.unsubscribe(registry: registry_name)
+    Subscriptions.dispatch_removed_subscription(subscription_id, registry: registry_name)
+
+    refute_receive(_, 1000)
+  end
 end
