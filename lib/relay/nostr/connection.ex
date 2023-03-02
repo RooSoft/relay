@@ -6,6 +6,9 @@ defmodule Relay.Nostr.Connection do
 
   alias Relay.Nostr.{Broadcaster, Filters, Storage}
 
+  @max_subscription_id_byte_size 64
+  @max_subscription_id_char_size @max_subscription_id_byte_size * 2
+
   def handle(request, peer) do
     request
     |> ClientMessage.parse()
@@ -27,10 +30,17 @@ defmodule Relay.Nostr.Connection do
   end
 
   defp dispatch({:req, filters}, _peer) do
-    filters
-    |> add_filters
-    |> stream_past_events
-    |> broadcast_eose
+    if(validate_subscription_id_length(filters)) do
+      filters
+      |> add_filters
+      |> stream_past_events
+      |> broadcast_eose
+    else
+      json_notice =
+        Jason.encode!(["NOTICE", ~s(Filter subscription id size is limited to 64 bytes)])
+
+      send(self(), {:emit, json_notice})
+    end
   end
 
   defp dispatch({:close, %CloseRequest{subscription_id: subscription_id}}, _peer) do
@@ -49,6 +59,14 @@ defmodule Relay.Nostr.Connection do
 
   def terminate(peer) do
     Logger.debug("TERMINATE: #{inspect(peer)}")
+  end
+
+  # Returns true if all subscription ids are 64 bytes or lower
+  defp validate_subscription_id_length(filters) do
+    filters
+    |> Enum.map(& &1.subscription_id)
+    |> Enum.map(&(String.length(&1) <= @max_subscription_id_char_size))
+    |> Enum.all?()
   end
 
   defp add_filters(filters) do
