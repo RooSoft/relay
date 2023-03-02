@@ -72,12 +72,12 @@ defmodule Relay.Nostr.BroadcasterTest do
 
         send(parent, :filter_added)
 
-        case filter.kinds do
-          [1] ->
+        case Enum.member?(filter.kinds, 1) do
+          true ->
             assert_receive({:emit, ^expected_json}, 1000)
             send(parent, :event_received)
 
-          _ ->
+          false ->
             refute_receive({:emit, ^expected_json}, 500)
             send(parent, :no_event_received)
         end
