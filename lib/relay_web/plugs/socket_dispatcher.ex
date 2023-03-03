@@ -23,6 +23,8 @@ defmodule RelayWeb.Plugs.SocketDispatcher do
   alias RelayWeb.Sockets.RequestSocket
   alias RelayWeb.Plugs.SocketDispatcher.{Headers, Nip11Document}
 
+  @max_frame_size Application.compile_env(:relay, :max_frame_size, 1024 * 1024 / 2)
+
   def init(opts), do: opts
 
   def call(conn, opts) do
@@ -77,7 +79,8 @@ defmodule RelayWeb.Plugs.SocketDispatcher do
             conn
             |> WebSockAdapter.upgrade(handler, arg,
               compress: websocket_options.compress,
-              timeout: websocket_options.connection_timeout
+              timeout: websocket_options.connection_timeout,
+              max_frame_size: @max_frame_size
             )
             |> halt()
 

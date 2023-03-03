@@ -9,7 +9,8 @@ import Config
 
 config :relay,
   ping_timeout: 30_000,
-  connection_timeout: 60_000
+  connection_timeout: 60_000,
+  max_frame_size: 1024 * 1024 / 2
 
 config :relay,
   ecto_repos: [Relay.Repo]
