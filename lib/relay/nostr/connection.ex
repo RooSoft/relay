@@ -45,10 +45,6 @@ defmodule Relay.Nostr.Connection do
 
         send(self(), {:emit, notice})
     end
-
-    if(validate_subscription_id_length(filters)) do
-    else
-    end
   end
 
   defp dispatch({:close, %CloseRequest{subscription_id: subscription_id}}, _peer) do
