@@ -30,16 +30,24 @@ defmodule Relay.Nostr.Connection do
   end
 
   defp dispatch({:req, filters}, _peer) do
-    if(validate_subscription_id_length(filters)) do
+    ### add these tests to the with:
+    ### - number of current subscriptions
+    ### - number of filters in the list (max 10 per subscription)
+
+    with :ok <- validate_subscription_id_length(filters) do
       filters
       |> add_filters
       |> stream_past_events
       |> broadcast_eose
     else
-      json_notice =
-        Jason.encode!(["NOTICE", ~s(Filter subscription id size is limited to 64 bytes)])
+      {:error, message} ->
+        notice = Jason.encode!(["NOTICE", message])
 
-      send(self(), {:emit, json_notice})
+        send(self(), {:emit, notice})
+    end
+
+    if(validate_subscription_id_length(filters)) do
+    else
     end
   end
 
@@ -61,12 +69,18 @@ defmodule Relay.Nostr.Connection do
     Logger.debug("TERMINATE: #{inspect(peer)}")
   end
 
-  # Returns true if all subscription ids are 64 bytes or lower
   defp validate_subscription_id_length(filters) do
-    filters
-    |> Enum.map(& &1.subscription_id)
-    |> Enum.map(&(String.length(&1) <= @max_subscription_id_char_size))
-    |> Enum.all?()
+    all_below_max_size? =
+      filters
+      |> Enum.map(& &1.subscription_id)
+      |> Enum.map(&(String.length(&1) <= @max_subscription_id_char_size))
+      |> Enum.all?()
+
+    if all_below_max_size? do
+      :ok
+    else
+      {:error, ~s(Filter subscription id size is limited to 64 bytes)}
+    end
   end
 
   defp add_filters(filters) do
