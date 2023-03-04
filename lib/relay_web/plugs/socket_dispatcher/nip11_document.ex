@@ -2,6 +2,7 @@ defmodule RelayWeb.Plugs.SocketDispatcher.Nip11Document do
   @nip_11_document Application.compile_env(:relay, :nip_11_document, [])
 
   @max_frame_size Application.compile_env(:relay, :max_frame_size, 1024 * 1024 / 2)
+  @max_subscriptions Application.compile_env(:relay, :max_subscriptions, 10)
 
   def get() do
     nip_11_document =
@@ -21,8 +22,8 @@ defmodule RelayWeb.Plugs.SocketDispatcher.Nip11Document do
       software: Map.get(nip_11_document, :software, "default software"),
       version: get_application_version(),
       limitation: %{
-        max_message_length: Map.get(limitation, :max_message_length, @max_frame_size)
-        #   max_subscriptions: Map.get(limitation, :max_subscriptions, "default"),
+        max_message_length: Map.get(limitation, :max_message_length, @max_frame_size),
+        max_subscriptions: Map.get(limitation, :max_subscriptions, @max_subscriptions)
         #   max_filters: Map.get(limitation, :max_filters, "default"),
         #   max_limit: Map.get(limitation, :max_limit, "default"),
         #   max_subid_length: Map.get(limitation, :max_subid_length, "default"),

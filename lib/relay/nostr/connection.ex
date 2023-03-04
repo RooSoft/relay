@@ -8,6 +8,7 @@ defmodule Relay.Nostr.Connection do
 
   @max_subscription_id_byte_size 64
   @max_subscription_id_char_size @max_subscription_id_byte_size * 2
+  @max_number_of_subscriptions Application.compile_env(:relay, :max_subscriptions, 10)
 
   def handle(request, peer) do
     request
@@ -31,10 +32,10 @@ defmodule Relay.Nostr.Connection do
 
   defp dispatch({:req, filters}, _peer) do
     ### add these tests to the with:
-    ### - number of current subscriptions
     ### - number of filters in the list (max 10 per subscription)
 
-    with :ok <- validate_subscription_id_length(filters) do
+    with :ok <- validate_subscription_id_length(filters),
+         :ok <- validate_number_of_current_subscriptions() do
       filters
       |> add_filters
       |> stream_past_events
@@ -76,6 +77,16 @@ defmodule Relay.Nostr.Connection do
       :ok
     else
       {:error, ~s(Filter subscription id size is limited to 64 bytes)}
+    end
+  end
+
+  defp validate_number_of_current_subscriptions do
+    subscriptions = Filters.subscriptions_by_pid()
+
+    if Enum.count(subscriptions) >= @max_number_of_subscriptions do
+      {:error, ~s(Maximum of #{@max_number_of_subscriptions} subscriptions reached)}
+    else
+      :ok
     end
   end
 
