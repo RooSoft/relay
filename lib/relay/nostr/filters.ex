@@ -71,6 +71,26 @@ defmodule Relay.Nostr.Filters do
   end
 
   @doc """
+  Returns all the filters related to a socket
+
+  ## Examples
+
+      iex> registry_name = Relay.Support.Generators.Registries.generate()
+      ...> Relay.Nostr.Filters.list_for_pid(self(), registry: registry_name)
+      []
+  """
+  @spec list_for_pid(pid(), list()) :: list()
+  def list_for_pid(pid \\ self(), opts \\ []) do
+    registry = Enum.into(opts, %{}) |> Map.get(:registry, @default_registry)
+
+    match_pattern = {:"$1", :"$2", :"$3"}
+    guards = [{:==, :"$2", pid}]
+    body = [{{:"$1", :"$2", :"$3"}}]
+    spec = [{match_pattern, guards, body}]
+    Registry.select(registry, spec)
+  end
+
+  @doc """
   Returns a count of all the filters
 
   ## Examples
