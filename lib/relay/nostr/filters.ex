@@ -90,6 +90,13 @@ defmodule Relay.Nostr.Filters do
     Registry.select(registry, spec)
   end
 
+  def subscriptions_by_pid(pid \\ self(), opts \\ []) do
+    pid
+    |> list_for_pid(opts)
+    |> Enum.map(&elem(&1, 0))
+    |> Enum.uniq()
+  end
+
   @doc """
   Returns a count of all the filters
 
