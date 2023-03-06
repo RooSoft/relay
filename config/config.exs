@@ -12,7 +12,8 @@ config :relay,
   connection_timeout: 60_000,
   max_frame_size: 1024 * 1024 / 2,
   max_subscriptions: 10,
-  max_filters: 10
+  max_filters: 10,
+  max_content_length: 102_400
 
 config :relay,
   ecto_repos: [Relay.Repo]

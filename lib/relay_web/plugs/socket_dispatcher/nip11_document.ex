@@ -4,6 +4,7 @@ defmodule RelayWeb.Plugs.SocketDispatcher.Nip11Document do
   @max_frame_size Application.compile_env(:relay, :max_frame_size, 1024 * 1024 / 2)
   @max_subscriptions Application.compile_env(:relay, :max_subscriptions, 10)
   @max_filters Application.compile_env(:relay, :max_filters, 10)
+  @max_content_length Application.compile_env(:relay, :max_content_length, 102400)
 
   def get() do
     nip_11_document =
@@ -25,12 +26,12 @@ defmodule RelayWeb.Plugs.SocketDispatcher.Nip11Document do
       limitation: %{
         max_message_length: Map.get(limitation, :max_message_length, @max_frame_size),
         max_subscriptions: Map.get(limitation, :max_subscriptions, @max_subscriptions),
-        max_filters: Map.get(limitation, :max_filters, @max_filters)
+        max_filters: Map.get(limitation, :max_filters, @max_filters),
         #   max_limit: Map.get(limitation, :max_limit, "default"),
         #   max_subid_length: Map.get(limitation, :max_subid_length, "default"),
         #   min_prefix: Map.get(limitation, :min_prefix, "default"),
         #   max_event_tags: Map.get(limitation, :max_event_tags, "default"),
-        #   max_content_length: Map.get(limitation, :max_content_length, "default"),
+        max_content_length: Map.get(limitation, :max_content_length, @max_content_length)
         #   min_pow_difficulty: Map.get(limitation, :min_pow_difficulty, "default"),
         #   auth_required: Map.get(limitation, :auth_required, "default"),
         #   payment_required: Map.get(limitation, :payment_required, "default")
