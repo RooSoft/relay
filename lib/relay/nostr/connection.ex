@@ -1,7 +1,7 @@
 defmodule Relay.Nostr.Connection do
   require Logger
 
-  alias NostrBasics.{ClientMessage, CloseRequest, Event}
+  alias NostrBasics.{ClientMessage, CloseRequest, Event, Filter}
   alias NostrBasics.Event.Validator
 
   alias Relay.Nostr.{Broadcaster, Filters, Storage}
@@ -12,6 +12,7 @@ defmodule Relay.Nostr.Connection do
   @max_number_of_filters Application.compile_env(:relay, :max_filters, 10)
   @max_content_length Application.compile_env(:relay, :max_content_length, 102_400)
   @max_event_tags Application.compile_env(:relay, :max_event_tags, 2500)
+  @max_limit Application.compile_env(:relay, :max_limit, 5000)
 
   def handle(request, peer) do
     request
@@ -40,7 +41,8 @@ defmodule Relay.Nostr.Connection do
     ### add these tests to the with:
     ### - number of filters in the list (max 10 per subscription)
 
-    with :ok <- validate_subscription_id_length(filters),
+    with :ok <- validate_max_limit(filters),
+         :ok <- validate_subscription_id_length(filters),
          :ok <- validate_number_of_current_subscriptions(),
          :ok <- validate_number_of_filters(filters) do
       filters
@@ -90,6 +92,16 @@ defmodule Relay.Nostr.Connection do
   end
 
   defp validate_number_of_tags(_), do: :ok
+
+  defp validate_max_limit(filters) do
+    filters
+    |> Enum.map(fn %Filter{limit: limit} = filter ->
+      new_limit = min(limit, @max_limit)
+      %Filter{filter | limit: new_limit}
+    end)
+
+    :ok
+  end
 
   defp validate_subscription_id_length(filters) do
     all_below_max_size? =

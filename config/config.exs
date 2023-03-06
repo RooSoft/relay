@@ -14,7 +14,8 @@ config :relay,
   max_subscriptions: 10,
   max_filters: 10,
   max_content_length: 102_400,
-  max_event_tags: 2500
+  max_event_tags: 2500,
+  max_limit: 5000
 
 config :relay,
   ecto_repos: [Relay.Repo]
