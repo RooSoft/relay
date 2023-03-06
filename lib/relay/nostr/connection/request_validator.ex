@@ -33,12 +33,27 @@ defmodule Relay.Nostr.Connection.RequestValidator do
     end)
   end
 
+  @doc """
+  Make sure subscription ID aren't longer than the value in configuration settings
+
+  ## Examples
+      iex> filter = Relay.Support.Generators.Filter.new()
+      ...> [%NostrBasics.Filter{filter | subscription_id: "1234567890"}]
+      ...> |> Relay.Nostr.Connection.RequestValidator.validate_subscription_id_length()
+      :ok
+
+      iex> filter = Relay.Support.Generators.Filter.new()
+      ...> large_subscription_id = Relay.Support.Generators.Values.string(257)
+      ...> [%NostrBasics.Filter{filter | subscription_id: large_subscription_id}]
+      ...> |> Relay.Nostr.Connection.RequestValidator.validate_subscription_id_length()
+      {:error, "Filter subscription id size is limited to 256 bytes"}
+  """
   @spec validate_subscription_id_length(list()) :: :ok | {:error, String.t()}
   def validate_subscription_id_length(filters) do
     all_below_max_size? =
       filters
       |> Enum.map(& &1.subscription_id)
-      |> Enum.map(&(String.length(&1) <= @max_subid_length / 2))
+      |> Enum.map(&(String.length(&1) <= @max_subid_length))
       |> Enum.all?()
 
     if all_below_max_size? do
