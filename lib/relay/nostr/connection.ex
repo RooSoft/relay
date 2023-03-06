@@ -33,7 +33,7 @@ defmodule Relay.Nostr.Connection do
     ### add these tests to the with:
     ### - number of filters in the list (max 10 per subscription)
 
-    with :ok <- RequestValidator.validate_max_limit(filters),
+    with filters <- RequestValidator.cap_max_limit(filters),
          :ok <- RequestValidator.validate_subscription_id_length(filters),
          :ok <- RequestValidator.validate_number_of_current_subscriptions(),
          :ok <- RequestValidator.validate_number_of_filters(filters) do

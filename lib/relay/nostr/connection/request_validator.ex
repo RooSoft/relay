@@ -12,15 +12,25 @@ defmodule Relay.Nostr.Connection.RequestValidator do
   @max_number_of_filters Application.compile_env(:relay, :max_filters, 10)
   @max_limit Application.compile_env(:relay, :max_limit, 5000)
 
-  @spec validate_max_limit(list()) :: :ok
-  def validate_max_limit(filters) do
+  @doc """
+  Cap the number of requested events according to the maximum in the configuration settings
+
+  ## Examples
+      iex> filter = Relay.Support.Generators.Filter.new()
+      ...> [%NostrBasics.Filter{filter | limit: 10}, %NostrBasics.Filter{filter | limit: 5001}]
+      ...> |> Relay.Nostr.Connection.RequestValidator.cap_max_limit()
+      [
+        %NostrBasics.Filter{subscription_id: filter.subscription_id, limit: 10},
+        %NostrBasics.Filter{subscription_id: filter.subscription_id, limit: 5000}
+      ]
+  """
+  @spec cap_max_limit(list()) :: :ok
+  def cap_max_limit(filters) do
     filters
     |> Enum.map(fn %Filter{limit: limit} = filter ->
-      new_limit = min(limit, @max_limit)
+      new_limit = min(limit || 0, @max_limit)
       %Filter{filter | limit: new_limit}
     end)
-
-    :ok
   end
 
   @spec validate_subscription_id_length(list()) :: :ok | {:error, String.t()}

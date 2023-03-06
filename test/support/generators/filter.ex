@@ -3,6 +3,7 @@ defmodule Relay.Support.Generators.Filter do
 
   @default_kinds []
   @default_authors []
+  @default_number_of_filters 10
 
   def new(opts \\ []) do
     kinds = Keyword.get(opts, :kinds, @default_kinds)
@@ -16,5 +17,11 @@ defmodule Relay.Support.Generators.Filter do
       e: [],
       p: []
     }
+  end
+
+  def list(number_of_filters \\ @default_number_of_filters) do
+    for _ <- 0..(number_of_filters - 1) do
+      new()
+    end
   end
 end
