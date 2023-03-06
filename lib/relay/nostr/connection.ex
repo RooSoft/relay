@@ -2,15 +2,13 @@ defmodule Relay.Nostr.Connection do
   require Logger
 
   alias NostrBasics.{ClientMessage, CloseRequest, Event, Filter}
-  alias NostrBasics.Event.Validator
 
   alias Relay.Nostr.{Broadcaster, Filters, Storage}
+  alias Relay.Nostr.Connection.{EventValidator}
 
   @max_subid_length Application.compile_env(:relay, :max_subid_length, 256)
   @max_number_of_subscriptions Application.compile_env(:relay, :max_subscriptions, 10)
   @max_number_of_filters Application.compile_env(:relay, :max_filters, 10)
-  @max_content_length Application.compile_env(:relay, :max_content_length, 102_400)
-  @max_event_tags Application.compile_env(:relay, :max_event_tags, 2500)
   @max_limit Application.compile_env(:relay, :max_limit, 5000)
 
   def handle(request, peer) do
@@ -22,9 +20,9 @@ defmodule Relay.Nostr.Connection do
   defp dispatch({:event, %Event{kind: kind, content: content, tags: tags} = event}, peer) do
     Logger.info("#{inspect(peer.address)} sent kind #{kind}: #{inspect(content)}")
 
-    with :ok <- validate_content_size(content),
-         :ok <- validate_number_of_tags(tags),
-         :ok <- Validator.validate_event(event) do
+    with :ok <- EventValidator.validate_content_size(content),
+         :ok <- EventValidator.validate_number_of_tags(tags),
+         :ok <- Event.Validator.validate_event(event) do
       event
       |> Storage.record_event()
       |> Broadcaster.send_to_all()
@@ -73,24 +71,6 @@ defmodule Relay.Nostr.Connection do
   def terminate(peer) do
     Logger.debug("TERMINATE: #{inspect(peer)}")
   end
-
-  defp validate_content_size(content) when byte_size(content) > @max_content_length do
-    message =
-      ~s(Content length of #{byte_size(content)} bytes is exceeding max length of #{@max_content_length})
-
-    {:error, message}
-  end
-
-  defp validate_content_size(_content), do: :ok
-
-  defp validate_number_of_tags(tags) when length(tags) > @max_event_tags do
-    message =
-      ~s(Event containing #{Enum.count(tags)}, exceeding the maximum of  #{@max_event_tags})
-
-    {:error, message}
-  end
-
-  defp validate_number_of_tags(_), do: :ok
 
   defp validate_max_limit(filters) do
     filters

@@ -2,6 +2,8 @@ defmodule Relay.Support.Generators.Values do
   alias NostrBasics.Keys.{PrivateKey, PublicKey}
 
   @default_id_size 16
+  @default_string_size 16
+  @alphabet Enum.concat([?0..?9, ?A..?Z, ?a..?z])
 
   def public_key() do
     PrivateKey.create()
@@ -10,6 +12,20 @@ defmodule Relay.Support.Generators.Values do
 
   @spec id(integer()) :: binary()
   def id(size \\ @default_id_size) do
-    :crypto.strong_rand_bytes(size) |> Binary.to_hex()
+    string(size)
+  end
+
+  def string(count \\ @default_string_size) do
+    # Technically not needed, but just to illustrate we're
+    # relying on the PRNG for this in random/1
+    :rand.seed(:exsplus, :os.timestamp())
+
+    Stream.repeatedly(&random_char_from_alphabet/0)
+    |> Enum.take(count)
+    |> List.to_string()
+  end
+
+  defp random_char_from_alphabet() do
+    Enum.random(@alphabet)
   end
 end
