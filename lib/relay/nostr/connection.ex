@@ -6,8 +6,7 @@ defmodule Relay.Nostr.Connection do
 
   alias Relay.Nostr.{Broadcaster, Filters, Storage}
 
-  @max_subscription_id_byte_size 64
-  @max_subscription_id_char_size @max_subscription_id_byte_size * 2
+  @max_subid_length Application.compile_env(:relay, :max_subid_length, 256)
   @max_number_of_subscriptions Application.compile_env(:relay, :max_subscriptions, 10)
   @max_number_of_filters Application.compile_env(:relay, :max_filters, 10)
   @max_content_length Application.compile_env(:relay, :max_content_length, 102_400)
@@ -107,13 +106,13 @@ defmodule Relay.Nostr.Connection do
     all_below_max_size? =
       filters
       |> Enum.map(& &1.subscription_id)
-      |> Enum.map(&(String.length(&1) <= @max_subscription_id_char_size))
+      |> Enum.map(&(String.length(&1) <= @max_subid_length / 2))
       |> Enum.all?()
 
     if all_below_max_size? do
       :ok
     else
-      {:error, ~s(Filter subscription id size is limited to 64 bytes)}
+      {:error, ~s(Filter subscription id size is limited to #{@max_subid_length} bytes)}
     end
   end
 
