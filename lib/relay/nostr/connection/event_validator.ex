@@ -7,29 +7,46 @@ defmodule Relay.Nostr.Connection.EventValidator do
 
   ## Examples
       iex> Relay.Support.Generators.Values.string(16)
-      ...> |> Relay.Nostr.Connection.EventValidator.validate_content_size()
+      ...> |> Relay.Nostr.Connection.EventValidator.validate_content_size(16)
       :ok
 
-      iex> Relay.Support.Generators.Values.string(102_401)
-      ...> |> Relay.Nostr.Connection.EventValidator.validate_content_size()
-      {:error, "Content length of 102401 bytes is exceeding max length of 102400"}
+      iex> Relay.Support.Generators.Values.string(17)
+      ...> |> Relay.Nostr.Connection.EventValidator.validate_content_size(16)
+      {:error, "Content length of 17 bytes is exceeding max length of 16"}
   """
   @spec validate_content_size(String.t()) :: :ok | {:error, String.t()}
-  def validate_content_size(content) when byte_size(content) > @max_content_length do
+  def validate_content_size(content, max_content_length \\ @max_content_length)
+
+  def validate_content_size(content, max_content_length)
+      when byte_size(content) > max_content_length do
     message =
-      ~s(Content length of #{byte_size(content)} bytes is exceeding max length of #{@max_content_length})
+      ~s(Content length of #{byte_size(content)} bytes is exceeding max length of #{max_content_length})
 
     {:error, message}
   end
 
-  def validate_content_size(_content), do: :ok
+  def validate_content_size(_content, _max_content_length), do: :ok
 
-  def validate_number_of_tags(tags) when length(tags) > @max_event_tags do
-    message =
-      ~s(Event containing #{Enum.count(tags)}, exceeding the maximum of  #{@max_event_tags})
+  @doc """
+  Make sure thare aren't too many tags in a given event, according to configuration settings
+
+  ## Examples
+      iex> []
+      ...> |> Relay.Nostr.Connection.EventValidator.validate_number_of_tags()
+      :ok
+
+      iex> Relay.Support.Generators.Values.list(11)
+      ...> |> Relay.Nostr.Connection.EventValidator.validate_number_of_tags(10)
+      {:error, "Event containing 11, exceeding the maximum of 10"}
+  """
+  @spec validate_number_of_tags(list()) :: :ok | {:error, String.t()}
+  def validate_number_of_tags(tags, max_event_tags \\ @max_event_tags)
+
+  def validate_number_of_tags(tags, max_event_tags) when length(tags) > max_event_tags do
+    message = ~s(Event containing #{Enum.count(tags)}, exceeding the maximum of #{max_event_tags})
 
     {:error, message}
   end
 
-  def validate_number_of_tags(_), do: :ok
+  def validate_number_of_tags(_tags, _max_event_tags), do: :ok
 end

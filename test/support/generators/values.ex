@@ -3,6 +3,7 @@ defmodule Relay.Support.Generators.Values do
 
   @default_id_size 16
   @default_string_size 16
+  @default_number_of_list_items 16
   @alphabet Enum.concat([?0..?9, ?A..?Z, ?a..?z])
 
   def public_key() do
@@ -23,6 +24,11 @@ defmodule Relay.Support.Generators.Values do
     Stream.repeatedly(&random_char_from_alphabet/0)
     |> Enum.take(count)
     |> List.to_string()
+  end
+
+  def list(nb_items \\ @default_number_of_list_items) do
+    0..(nb_items - 1)
+    |> Enum.map(&string/1)
   end
 
   defp random_char_from_alphabet() do
