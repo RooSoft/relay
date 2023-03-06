@@ -1,15 +1,10 @@
 defmodule Relay.Nostr.Connection do
   require Logger
 
-  alias NostrBasics.{ClientMessage, CloseRequest, Event, Filter}
+  alias NostrBasics.{ClientMessage, CloseRequest, Event}
 
   alias Relay.Nostr.{Broadcaster, Filters, Storage}
-  alias Relay.Nostr.Connection.{EventValidator}
-
-  @max_subid_length Application.compile_env(:relay, :max_subid_length, 256)
-  @max_number_of_subscriptions Application.compile_env(:relay, :max_subscriptions, 10)
-  @max_number_of_filters Application.compile_env(:relay, :max_filters, 10)
-  @max_limit Application.compile_env(:relay, :max_limit, 5000)
+  alias Relay.Nostr.Connection.{EventValidator, RequestValidator}
 
   def handle(request, peer) do
     request
@@ -38,10 +33,10 @@ defmodule Relay.Nostr.Connection do
     ### add these tests to the with:
     ### - number of filters in the list (max 10 per subscription)
 
-    with :ok <- validate_max_limit(filters),
-         :ok <- validate_subscription_id_length(filters),
-         :ok <- validate_number_of_current_subscriptions(),
-         :ok <- validate_number_of_filters(filters) do
+    with :ok <- RequestValidator.validate_max_limit(filters),
+         :ok <- RequestValidator.validate_subscription_id_length(filters),
+         :ok <- RequestValidator.validate_number_of_current_subscriptions(),
+         :ok <- RequestValidator.validate_number_of_filters(filters) do
       filters
       |> add_filters
       |> stream_past_events
@@ -70,48 +65,6 @@ defmodule Relay.Nostr.Connection do
 
   def terminate(peer) do
     Logger.debug("TERMINATE: #{inspect(peer)}")
-  end
-
-  defp validate_max_limit(filters) do
-    filters
-    |> Enum.map(fn %Filter{limit: limit} = filter ->
-      new_limit = min(limit, @max_limit)
-      %Filter{filter | limit: new_limit}
-    end)
-
-    :ok
-  end
-
-  defp validate_subscription_id_length(filters) do
-    all_below_max_size? =
-      filters
-      |> Enum.map(& &1.subscription_id)
-      |> Enum.map(&(String.length(&1) <= @max_subid_length / 2))
-      |> Enum.all?()
-
-    if all_below_max_size? do
-      :ok
-    else
-      {:error, ~s(Filter subscription id size is limited to #{@max_subid_length} bytes)}
-    end
-  end
-
-  defp validate_number_of_current_subscriptions do
-    subscriptions = Filters.subscriptions_by_pid()
-
-    if Enum.count(subscriptions) >= @max_number_of_subscriptions do
-      {:error, ~s(Maximum of #{@max_number_of_subscriptions} subscriptions reached)}
-    else
-      :ok
-    end
-  end
-
-  defp validate_number_of_filters(filters) do
-    if Enum.count(filters) <= @max_number_of_filters do
-      :ok
-    else
-      {:error, ~s(Cannot add more than #{@max_number_of_filters} filters at a time)}
-    end
   end
 
   defp add_filters(filters) do
