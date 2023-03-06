@@ -12,6 +12,7 @@ defmodule Relay.Nostr.Connection.RequestValidator do
   @max_number_of_filters Application.compile_env(:relay, :max_filters, 10)
   @max_limit Application.compile_env(:relay, :max_limit, 5000)
 
+  @spec validate_max_limit(list()) :: :ok
   def validate_max_limit(filters) do
     filters
     |> Enum.map(fn %Filter{limit: limit} = filter ->
@@ -22,6 +23,7 @@ defmodule Relay.Nostr.Connection.RequestValidator do
     :ok
   end
 
+  @spec validate_subscription_id_length(list()) :: :ok | {:error, String.t()}
   def validate_subscription_id_length(filters) do
     all_below_max_size? =
       filters
@@ -36,6 +38,7 @@ defmodule Relay.Nostr.Connection.RequestValidator do
     end
   end
 
+  @spec validate_number_of_current_subscriptions() :: :ok | {:error, String.t()}
   def validate_number_of_current_subscriptions do
     subscriptions = Filters.subscriptions_by_pid()
 
@@ -46,6 +49,7 @@ defmodule Relay.Nostr.Connection.RequestValidator do
     end
   end
 
+  @spec validate_number_of_filters(list()) :: :ok | {:error, String.t()}
   def validate_number_of_filters(filters) do
     if Enum.count(filters) <= @max_number_of_filters do
       :ok
