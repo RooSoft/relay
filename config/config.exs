@@ -13,7 +13,8 @@ config :relay,
   max_frame_size: 1024 * 1024 / 2,
   max_subscriptions: 10,
   max_filters: 10,
-  max_content_length: 102_400
+  max_content_length: 102_400,
+  max_event_tags: 2500
 
 config :relay,
   ecto_repos: [Relay.Repo]
