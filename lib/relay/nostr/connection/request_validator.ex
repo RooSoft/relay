@@ -7,6 +7,8 @@ defmodule Relay.Nostr.Connection.RequestValidator do
 
   alias Relay.Nostr.{Filters}
 
+  @default_filters_registry Registry.Filters
+
   @max_subid_length Application.compile_env(:relay, :max_subid_length, 256)
   @max_number_of_subscriptions Application.compile_env(:relay, :max_subscriptions, 10)
   @max_number_of_filters Application.compile_env(:relay, :max_filters, 10)
@@ -63,12 +65,35 @@ defmodule Relay.Nostr.Connection.RequestValidator do
     end
   end
 
-  @spec validate_number_of_current_subscriptions() :: :ok | {:error, String.t()}
-  def validate_number_of_current_subscriptions do
-    subscriptions = Filters.subscriptions_by_pid()
+  @doc """
+  Make sure there aren't more subscriptions than the limit in the configuration settings
 
-    if Enum.count(subscriptions) >= @max_number_of_subscriptions do
-      {:error, ~s(Maximum of #{@max_number_of_subscriptions} subscriptions reached)}
+  ## Examples
+      iex> registry_name = Relay.Support.Generators.Registries.generate()
+      ...> Relay.Support.Generators.Filter.new()
+      ...> |> Relay.Nostr.Filters.add(registry: registry_name)
+      ...> Relay.Nostr.Connection.RequestValidator.validate_number_of_current_subscriptions(2, registry: registry_name)
+      :ok
+
+      iex> registry_name = Relay.Support.Generators.Registries.generate()
+      ...> Relay.Support.Generators.Filter.new()
+      ...> |> Relay.Nostr.Filters.add(registry: registry_name)
+      ...> Relay.Support.Generators.Filter.new()
+      ...> |> Relay.Nostr.Filters.add(registry: registry_name)
+      ...> Relay.Nostr.Connection.RequestValidator.validate_number_of_current_subscriptions(2, registry: registry_name)
+      {:error, "Maximum of 2 subscriptions reached"}
+  """
+  @spec validate_number_of_current_subscriptions(integer(), list()) :: :ok | {:error, String.t()}
+  def validate_number_of_current_subscriptions(
+        max_number_of_subscriptions \\ @max_number_of_subscriptions,
+        opts \\ []
+      ) do
+    registry = Enum.into(opts, %{}) |> Map.get(:registry, @default_filters_registry)
+
+    subscriptions = Filters.subscriptions_by_pid(self(), registry: registry)
+
+    if Enum.count(subscriptions) >= max_number_of_subscriptions do
+      {:error, ~s(Maximum of #{max_number_of_subscriptions} subscriptions reached)}
     else
       :ok
     end
