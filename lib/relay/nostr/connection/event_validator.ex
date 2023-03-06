@@ -1,4 +1,8 @@
 defmodule Relay.Nostr.Connection.EventValidator do
+  @moduledoc """
+  Event valdation to make sure it respects sane maximum defaults
+  """
+
   @max_content_length Application.compile_env(:relay, :max_content_length, 102_400)
   @max_event_tags Application.compile_env(:relay, :max_event_tags, 2500)
 
