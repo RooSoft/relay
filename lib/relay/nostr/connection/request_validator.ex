@@ -99,12 +99,27 @@ defmodule Relay.Nostr.Connection.RequestValidator do
     end
   end
 
-  @spec validate_number_of_filters(list()) :: :ok | {:error, String.t()}
-  def validate_number_of_filters(filters) do
-    if Enum.count(filters) <= @max_number_of_filters do
+  @doc """
+  Make sure an event doesn't have more filters than the limit in the configuration settings
+
+  ## Examples
+      iex> [Relay.Support.Generators.Filter.new()]
+      ...> |> Relay.Nostr.Connection.RequestValidator.validate_number_of_filters(2)
+      :ok
+
+      iex> [Relay.Support.Generators.Filter.new(), Relay.Support.Generators.Filter.new(), Relay.Support.Generators.Filter.new()]
+      ...> |> Relay.Nostr.Connection.RequestValidator.validate_number_of_filters(2)
+      {:error, "Cannot add more than 2 filters at a time"}
+  """
+  @spec validate_number_of_filters(list(), integer()) :: :ok | {:error, String.t()}
+  def validate_number_of_filters(
+        filters,
+        max_number_of_filters \\ @max_number_of_filters
+      ) do
+    if Enum.count(filters) <= max_number_of_filters do
       :ok
     else
-      {:error, ~s(Cannot add more than #{@max_number_of_filters} filters at a time)}
+      {:error, ~s(Cannot add more than #{max_number_of_filters} filters at a time)}
     end
   end
 end
