@@ -12,8 +12,11 @@ defmodule Relay.Nostr.Connection.Nip11Document do
     limitations: %Limitations{}
   ]
 
+  @type t :: %Nip11Document{}
+
   @nip11 Application.compile_env(:relay, :nip_11_document, [])
 
+  @spec get() :: Nip11Document.t()
   def get() do
     limitations = Limitations.get()
 

@@ -31,3 +31,28 @@ config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :relay,
+  ping_timeout: 60_000,
+  connection_timeout: 120_000,
+  nip_11_document: [
+    name: "test relay",
+    description: "Built on top of the Open Telecom Platform (OTP)",
+    pubkey: "5ab9f2efb1fda6bc32696f6f3fd715e156346175b93b6382099d23627693c3f2",
+    contact: "5ab9f2efb1fda6bc32696f6f3fd715e156346175b93b6382099d23627693c3f2",
+    supported_nips: [1, 4, 9, 11, 15],
+    software: "https://github.com/RooSoft/relay.git",
+    limitation: [
+      max_message_length: 1000,
+      max_subscriptions: 2,
+      max_filters: 2,
+      max_limit: 5000,
+      max_subid_length: 64,
+      min_prefix: 4,
+      max_event_tags: 25,
+      max_content_length: 1024,
+      min_pow_difficulty: 0,
+      auth_required: false,
+      payment_required: false
+    ]
+  ]
