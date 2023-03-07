@@ -39,7 +39,7 @@ defmodule Relay.Nostr.Connection.Nip11Document.Limitations do
   """
   @spec get() :: Limitations.t()
   def get() do
-    limitations_keyword_list = Keyword.get(@nip11, :limitation)
+    limitations_keyword_list = Keyword.get(@nip11, :limitation, [])
 
     struct(Limitations, limitations_keyword_list)
   end
