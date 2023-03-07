@@ -30,9 +30,6 @@ defmodule Relay.Nostr.Connection do
   end
 
   defp dispatch({:req, filters}, _peer) do
-    ### add these tests to the with:
-    ### - number of filters in the list (max 10 per subscription)
-
     with filters <- RequestValidator.cap_max_limit(filters),
          :ok <- RequestValidator.validate_subscription_id_length(filters),
          :ok <- RequestValidator.validate_number_of_current_subscriptions(),
