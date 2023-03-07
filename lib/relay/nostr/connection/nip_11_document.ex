@@ -20,8 +20,7 @@ defmodule Relay.Nostr.Connection.Nip11Document do
   Returns a document containing the relay's specifications
 
   ## Examples
-      iex> Config.Reader.read!("config/test.exs")
-      ...> Relay.Nostr.Connection.Nip11Document.get()
+      iex> Relay.Nostr.Connection.Nip11Document.get()
       %Relay.Nostr.Connection.Nip11Document{
         name: "test relay",
         description: "Built on top of the Open Telecom Platform (OTP)",

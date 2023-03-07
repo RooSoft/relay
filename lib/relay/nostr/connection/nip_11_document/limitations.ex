@@ -26,8 +26,7 @@ defmodule Relay.Nostr.Connection.Nip11Document.Limitations do
   Returns a struct containing the relay's limitations as from in the config files
 
   ## Examples
-      iex> Config.Reader.read!("config/test.exs")
-      ...> Relay.Nostr.Connection.Nip11Document.Limitations.get()
+      iex> Relay.Nostr.Connection.Nip11Document.Limitations.get()
       %Relay.Nostr.Connection.Nip11Document.Limitations{
         max_message_length: 1000,
         max_subscriptions: 2,
