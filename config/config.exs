@@ -16,7 +16,8 @@ config :relay,
   max_content_length: 102_400,
   max_event_tags: 2500,
   max_limit: 5000,
-  max_subid_length: 256
+  max_subid_length: 256,
+  min_prefix: 4
 
 config :relay,
   ecto_repos: [Relay.Repo]

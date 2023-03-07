@@ -31,13 +31,20 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
   Applies a ID filter to an event
 
   ## Examples
-      iex> id = "cabf522ac94121ffc04a07265960fc5e"
+      iex> id = <<0x5ab9f2efb1fda6bc32696f6f3fd715e156346175b93b6382099d23627693c3f2::256>>
       ...> filter = %NostrBasics.Filter{ids: [id]}
       ...> event = %NostrBasics.Event{id: id}
       ...> Relay.Nostr.Broadcaster.ApplyFilter.by_id(event, filter)
       event
 
-      iex> id = "cabf522ac94121ffc04a07265960fc5e"
+      iex> id = <<0x5ab9f2efb1fda6bc32696f6f3fd715e156346175b93b6382099d23627693c3f2::256>>
+      ...> <<prefix::bitstring-size(32), _::bitstring>> = id
+      ...> filter = %NostrBasics.Filter{ids: [prefix]}
+      ...> event = %NostrBasics.Event{id: id}
+      ...> Relay.Nostr.Broadcaster.ApplyFilter.by_id(event, filter)
+      event
+
+      iex> id = <<0x5ab9f2efb1fda6bc32696f6f3fd715e156346175b93b6382099d23627693c3f2::256>>
       ...> filter = %NostrBasics.Filter{ids: [id]}
       ...> event = %NostrBasics.Event{id: String.reverse(id)}
       ...> Relay.Nostr.Broadcaster.ApplyFilter.by_id(event, filter)
@@ -48,7 +55,19 @@ defmodule Relay.Nostr.Broadcaster.ApplyFilter do
   def by_id(%Event{id: _kind} = event, %Filter{ids: []}), do: event
 
   def by_id(%Event{id: id} = event, %Filter{ids: ids}) do
-    if Enum.member?(ids, id), do: event, else: nil
+    found =
+      ids
+      |> Enum.any?(fn filter_id ->
+        filter_id_size = bit_size(filter_id)
+
+        case id do
+          ^filter_id -> true
+          <<^filter_id::bitstring-size(filter_id_size), _::bitstring>> -> true
+          _ -> false
+        end
+      end)
+
+    if found, do: event, else: nil
   end
 
   @doc """
