@@ -1,4 +1,4 @@
-defmodule Relay.Nostr.Connection.Nip11Document.Limitations do
+defmodule Relay.Nostr.Nip11Document.Limitations do
   defstruct [
     :max_message_length,
     :max_subscriptions,
@@ -16,7 +16,7 @@ defmodule Relay.Nostr.Connection.Nip11Document.Limitations do
   # auth_required
   # payment_required
 
-  alias Relay.Nostr.Connection.Nip11Document.Limitations
+  alias Relay.Nostr.Nip11Document.Limitations
 
   @type t :: %Limitations{}
 
@@ -26,8 +26,8 @@ defmodule Relay.Nostr.Connection.Nip11Document.Limitations do
   Returns a struct containing the relay's limitations as from in the config files
 
   ## Examples
-      iex> Relay.Nostr.Connection.Nip11Document.Limitations.get()
-      %Relay.Nostr.Connection.Nip11Document.Limitations{
+      iex> Relay.Nostr.Nip11Document.Limitations.get()
+      %Relay.Nostr.Nip11Document.Limitations{
         max_message_length: 1000,
         max_subscriptions: 2,
         max_filters: 2,

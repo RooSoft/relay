@@ -1,6 +1,6 @@
-defmodule Relay.Nostr.Connection.Nip11Document do
-  alias Relay.Nostr.Connection.Nip11Document
-  alias Relay.Nostr.Connection.Nip11Document.Limitations
+defmodule Relay.Nostr.Nip11Document do
+  alias Relay.Nostr.Nip11Document
+  alias Relay.Nostr.Nip11Document.Limitations
 
   defstruct [
     :name,
@@ -20,15 +20,15 @@ defmodule Relay.Nostr.Connection.Nip11Document do
   Returns a document containing the relay's specifications
 
   ## Examples
-      iex> Relay.Nostr.Connection.Nip11Document.get()
-      %Relay.Nostr.Connection.Nip11Document{
+      iex> Relay.Nostr.Nip11Document.get()
+      %Relay.Nostr.Nip11Document{
         name: "test relay",
         description: "Built on top of the Open Telecom Platform (OTP)",
         pubkey: "5ab9f2efb1fda6bc32696f6f3fd715e156346175b93b6382099d23627693c3f2",
         contact: "5ab9f2efb1fda6bc32696f6f3fd715e156346175b93b6382099d23627693c3f2",
         supported_nips: [1, 4, 9, 11, 15],
         software: "https://github.com/RooSoft/relay.git",
-        limitations: %Relay.Nostr.Connection.Nip11Document.Limitations{
+        limitations: %Relay.Nostr.Nip11Document.Limitations{
           max_content_length: 1024,
           max_event_tags: 25,
           max_filters: 2,
