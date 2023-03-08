@@ -20,8 +20,9 @@ defmodule RelayWeb.Plugs.SocketDispatcher do
   require Logger
 
   alias Phoenix.Socket.{Transport}
+  alias Relay.Nostr.Nip11Document
   alias RelayWeb.Sockets.RequestSocket
-  alias RelayWeb.Plugs.SocketDispatcher.{Headers, Nip11Document}
+  alias RelayWeb.Plugs.SocketDispatcher.{Headers}
 
   @max_frame_size Application.compile_env(:relay, :max_frame_size, 1024 * 1024 / 2)
 
@@ -97,7 +98,9 @@ defmodule RelayWeb.Plugs.SocketDispatcher do
   defp send_nip11_document(conn) do
     Logger.info("nip11 document requested by #{inspect(conn.remote_ip)}")
 
-    json = Nip11Document.get()
+    json =
+      Nip11Document.get()
+      |> Jason.encode!()
 
     conn
     |> resp(200, json)

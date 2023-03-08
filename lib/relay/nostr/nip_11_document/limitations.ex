@@ -22,6 +22,20 @@ defmodule Relay.Nostr.Nip11Document.Limitations do
 
   @nip11 Application.compile_env(:relay, :nip_11_document, [])
 
+  # This thing is needed so that the Jason library knows how to serialize the events
+  defimpl Jason.Encoder do
+    def encode(
+          %Limitations{} = limitations,
+          opts
+        ) do
+      limitations
+      |> Map.from_struct()
+      |> Enum.filter(&(&1 != nil))
+      |> Enum.into(%{})
+      |> Jason.Encode.map(opts)
+    end
+  end
+
   @doc """
   Returns a struct containing the relay's limitations as from in the config files
 
