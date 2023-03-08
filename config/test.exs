@@ -42,6 +42,10 @@ config :relay,
     contact: "5ab9f2efb1fda6bc32696f6f3fd715e156346175b93b6382099d23627693c3f2",
     supported_nips: [1, 4, 9, 11, 15],
     software: "https://github.com/RooSoft/relay.git",
+    websockets: [
+      timeout: 120,
+      keepalive: 60
+    ],
     limitation: [
       max_message_length: 1000,
       max_subscriptions: 2,
