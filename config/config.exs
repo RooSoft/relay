@@ -8,18 +8,6 @@
 import Config
 
 config :relay,
-  ping_timeout: 30_000,
-  connection_timeout: 60_000,
-  max_frame_size: 1024 * 1024 / 2,
-  max_subscriptions: 10,
-  max_filters: 10,
-  max_content_length: 102_400,
-  max_event_tags: 2500,
-  max_limit: 5000,
-  max_subid_length: 256,
-  min_prefix: 4
-
-config :relay,
   ecto_repos: [Relay.Repo]
 
 # Configures the endpoint

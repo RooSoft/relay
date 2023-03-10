@@ -30,8 +30,8 @@ defmodule Relay.Nostr.Nip11Document.Websockets do
   ## Examples
       iex> Relay.Nostr.Nip11Document.Websockets.get()
       %Relay.Nostr.Nip11Document.Websockets{
-        timeout: 120,
-        keepalive: 60
+        timeout: 120_000,
+        keepalive: 60_000
       }
   """
   @spec get() :: Websockets.t()

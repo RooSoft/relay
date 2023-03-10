@@ -5,9 +5,10 @@ defmodule RelayWeb.Endpoint do
   alias RelayWeb.Plugs.SocketDispatcher
 
   @nip_11_document Nip11Document.get()
+  @websockets Map.get(@nip_11_document, :websockets)
 
-  @ping_timeout Map.get(@nip_11_document, :ping_timeout)
-  @connection_timeout Map.get(@nip_11_document, :connection_timeout)
+  @ping_timeout Map.get(@websockets, :keepalive)
+  @connection_timeout Map.get(@websockets, :timeout)
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.

@@ -33,8 +33,6 @@ config :logger, level: :warning
 config :phoenix, :plug_init_mode, :runtime
 
 config :relay,
-  ping_timeout: 60_000,
-  connection_timeout: 120_000,
   nip_11_document: [
     name: "test relay",
     description: "Built on top of the Open Telecom Platform (OTP)",
@@ -43,8 +41,8 @@ config :relay,
     supported_nips: [1, 4, 9, 11, 15],
     software: "https://github.com/RooSoft/relay.git",
     websockets: [
-      timeout: 120,
-      keepalive: 60
+      timeout: 120_000,
+      keepalive: 60_000
     ],
     limitation: [
       max_message_length: 1000,

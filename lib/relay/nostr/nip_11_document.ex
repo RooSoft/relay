@@ -46,8 +46,8 @@ defmodule Relay.Nostr.Nip11Document do
         software: "https://github.com/RooSoft/relay.git",
         version: "0.0.2",
         websockets: %Relay.Nostr.Nip11Document.Websockets{
-          keepalive: 60,
-          timeout: 120
+          keepalive: 60_000,
+          timeout: 120_000
         },
         limitations: %Relay.Nostr.Nip11Document.Limitations{
           max_content_length: 1024,
