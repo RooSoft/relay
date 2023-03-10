@@ -1,10 +1,13 @@
 defmodule RelayWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :relay
 
+  alias Relay.Nostr.Nip11Document
   alias RelayWeb.Plugs.SocketDispatcher
 
-  @ping_timeout Application.compile_env(:relay, :ping_timeout, 30_000)
-  @connection_timeout Application.compile_env(:relay, :connection_timeout, 60_000)
+  @nip_11_document Nip11Document.get()
+
+  @ping_timeout Map.get(@nip_11_document, :ping_timeout)
+  @connection_timeout Map.get(@nip_11_document, :connection_timeout)
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
