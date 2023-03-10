@@ -3,8 +3,13 @@ defmodule Relay.Nostr.Connection.EventValidator do
   Event valdation to make sure it respects sane maximum defaults
   """
 
-  @max_content_length Application.compile_env(:relay, :max_content_length, 102_400)
-  @max_event_tags Application.compile_env(:relay, :max_event_tags, 2500)
+  alias Relay.Nostr.Nip11Document
+
+  @nip_11_document Nip11Document.get()
+  @limitations Map.get(@nip_11_document, :limitations)
+
+  @max_content_length Map.get(@limitations, :max_content_length)
+  @max_event_tags Map.get(@limitations, :max_event_tags)
 
   @doc """
   Makes sure an event's content size is less than the max in configuration settings

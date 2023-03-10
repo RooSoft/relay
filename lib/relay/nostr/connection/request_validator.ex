@@ -5,8 +5,7 @@ defmodule Relay.Nostr.Connection.RequestValidator do
 
   alias NostrBasics.Filter
 
-  alias Relay.Nostr.{Filters}
-  alias Relay.Nostr.Nip11Document
+  alias Relay.Nostr.{Filters, Nip11Document}
 
   @default_filters_registry Registry.Filters
 
