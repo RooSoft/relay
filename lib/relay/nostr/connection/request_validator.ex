@@ -6,13 +6,17 @@ defmodule Relay.Nostr.Connection.RequestValidator do
   alias NostrBasics.Filter
 
   alias Relay.Nostr.{Filters}
+  alias Relay.Nostr.Nip11Document
 
   @default_filters_registry Registry.Filters
 
-  @max_subid_length Application.compile_env(:relay, :max_subid_length, 256)
-  @max_number_of_subscriptions Application.compile_env(:relay, :max_subscriptions, 10)
-  @max_number_of_filters Application.compile_env(:relay, :max_filters, 10)
-  @max_limit Application.compile_env(:relay, :max_limit, 5000)
+  @nip_11_document Nip11Document.get()
+  @limitations Map.get(@nip_11_document, :limitations)
+
+  @max_number_of_filters Map.get(@limitations, :max_filters)
+  @max_subid_length Map.get(@limitations, :max_subid_length)
+  @max_number_of_subscriptions Map.get(@limitations, :max_subscriptions)
+  @max_limit Map.get(@limitations, :max_limit)
 
   @doc """
   Cap the number of requested events according to the maximum in the configuration settings
@@ -45,10 +49,10 @@ defmodule Relay.Nostr.Connection.RequestValidator do
       :ok
 
       iex> filter = Relay.Support.Generators.Filter.new()
-      ...> large_subscription_id = Relay.Support.Generators.Values.string(257)
+      ...> large_subscription_id = Relay.Support.Generators.Values.string(65)
       ...> [%NostrBasics.Filter{filter | subscription_id: large_subscription_id}]
       ...> |> Relay.Nostr.Connection.RequestValidator.validate_subscription_id_length()
-      {:error, "Filter subscription id size is limited to 256 bytes"}
+      {:error, "Filter subscription id size is limited to 64 bytes"}
   """
   @spec validate_subscription_id_length(list()) :: :ok | {:error, String.t()}
   def validate_subscription_id_length(filters) do
