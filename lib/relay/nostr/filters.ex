@@ -51,6 +51,16 @@ defmodule Relay.Nostr.Filters do
   end
 
   @doc """
+  Removes all subscriptions owned by a socket
+  """
+  @spec remove_subscriptions_by_pid(pid()) :: list()
+  def remove_subscriptions_by_pid(pid) do
+    for subscription <- subscriptions_by_pid(pid) do
+      remove_subscription(subscription)  
+    end
+  end
+
+  @doc """
   Returns all the filters in a tuple also containing the subscription id and the pid
 
   ## Examples

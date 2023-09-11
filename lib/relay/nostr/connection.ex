@@ -6,6 +6,10 @@ defmodule Relay.Nostr.Connection do
   alias Relay.Nostr.{Broadcaster, Filters, Storage}
   alias Relay.Nostr.Connection.{EventValidator, RequestValidator}
 
+  def terminate(_peer) do
+    Filters.remove_subscriptions_by_pid(self())
+  end
+
   def handle(request, peer) do
     request
     |> ClientMessage.parse()
@@ -58,10 +62,6 @@ defmodule Relay.Nostr.Connection do
     Logger.debug("UNKNOWN MESSAGE: #{inspect(unknown_message)}")
 
     []
-  end
-
-  def terminate(peer) do
-    Logger.debug("TERMINATE: #{inspect(peer)}")
   end
 
   defp add_filters(filters) do
